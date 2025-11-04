@@ -1,0 +1,2883 @@
+<html lang="en" dir="ltr">
+
+<head>
+
+    <meta charset="UTF-8"></meta>
+
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"></meta>
+
+    <title>اختبار إلكتروني</title>
+
+    <style>
+
+        body { font-family: Arial, sans-serif; }
+
+        .hidden { display: none; }
+
+        #result { margin-top: 20px; }
+
+        #timer { font-size: 20px; color: red; font-weight: bold; } /* زيادة سمك الخط */
+
+        h2 { font-size: 22px; font-weight: bold; color: #000000; } /* تغيير اللون إلى الأسود وزيادة السُمك */
+
+        label { font-size: 18px; font-weight: bold; color: #333333; } /* زيادة سمك الخط وتحسين اللون */
+
+        #timer { font-size: 20px; color: red; }
+
+        h2 { font-size: 22px; }
+
+        label { font-size: 18px; }
+
+        .correct { font-weight: bold; color: red; }
+
+        /* CSS لتحريك الزر */
+
+        #next-button {
+
+            position: absolute; /* يسمح بتحديد الموقع */
+
+            left: 20px; /* المسافة من الجانب الأيسر */
+
+            bottom: 20px; /* المسافة من الأسفل */
+
+            padding: 10px 20px; /* لتعديل حجم الزر */
+
+        }
+
+        #popup {
+
+    position: fixed;
+
+    top: 30%;
+
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    background-color: #fff;
+
+    border: 1px solid #ccc;
+
+    padding: 20px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    z-index: 1000;
+
+    text-align: center;
+
+    display: none;
+
+}
+
+#popup button {
+
+    margin-top: 10px;
+
+    padding: 5px 10px;
+
+    background-color: red;
+
+    color: white;
+
+    border: none;
+
+    cursor: pointer;
+
+}
+
+#popup button:hover {
+
+    background-color: darkred;
+
+}
+
+    </style>
+
+</head>
+
+<body>
+
+    <h2 class="header-one">
+
+        التدريب علي اختبارات الجهاز المركزى
+
+
+   
+
+    </div>
+<div id="login-container">
+
+    <label for="password">أدخل كلمة المرور:</label>
+
+    <input id="password" type="password" />
+
+    <br /><br />
+
+    <label for="duration">حدد مدة الاختبار (بالدقائق):</label>
+
+    <input id="duration" min="1" type="number" value="5" />
+<br /><br />
+    <label for="questionCount">حدد عدد الأسئلة:</label>
+    <input id="questionCount" min="1" max="55" type="number" value="20" />
+<br /><br />
+
+    <button onclick="checkPassword()">دخول</button>
+
+</div>
+
+<div class="hidden" id="quiz">
+
+    <div id="timer">5:00</div>
+
+    <div id="question-info">السؤال 1 من 20</div>
+
+    <form id="quizForm">
+
+        <div id="question-container"></div>
+      <br><br><br>
+
+        <button id="next-button" onclick="nextQuestion()" type="button">التالي</button>
+
+    </form>
+
+</div>
+
+<div class="hidden" id="result"></div>
+
+<div id="popup" class="hidden">
+
+    <p>
+اكتب كلمة المرور صح    </p>
+
+    <button onclick="closePopup()">إغلاق</button>
+
+</div>
+
+<script>
+
+     const questions = [
+
+
+{
+    "question": "They ____ a new house next year.",
+    "options": ["bought", "will buy", "buying", "buys"],
+    "answer": "will buy",
+    "explanation": "نستخدم 'will + verb' للتعبير عن المستقبل البسيط، و'will buy' هو الشكل الصحيح."
+  },
+  {
+    "question": "Choose the correct future simple form of the verb \"sleep\".",
+    "options": ["Will sleep", "Sleeping", "Sleeps", "Sleep"],
+    "answer": "Will sleep",
+    "explanation": "الشكل الصحيح للمستقبل البسيط هو 'will + base verb' يعني 'will sleep'."
+  },
+  {
+    "question": "I always ____ my mom in the kitchen.",
+    "options": ["helped", "helps", "helping", "help"],
+    "answer": "help",
+    "explanation": "لأن الجملة بتتكلم عن عادة، فنستخدم المضارع البسيط مع I: 'help'."
+  },
+  {
+    "question": "What is the negative form of \"I am going to the store\"?",
+    "options": ["I not going to the store", "I do not going to the store", "I am not going to the store", "I am going not to the store"],
+    "answer": "I am not going to the store",
+    "explanation": "الشكل الصحيح للنفي هو إدخال 'not' بعد 'am': 'I am not going...'."
+  },
+  {
+    "question": "Choose the correct present continuous form of the verb ( cook )",
+    "options": ["Has cooked", "Is/are cooking", "Cooks", "Cook"],
+    "answer": "Is/are cooking",
+    "explanation": "المضارع المستمر بيتكون من 'am/is/are + verb-ing'."
+  },
+  {
+    "question": "What are the forms of the verb \"to be\" in the present simple?",
+    "options": ["Be/Been", "Has/Have", "Am/Is/Are", "Was/Were"],
+    "answer": "Am/Is/Are",
+    "explanation": "في المضارع البسيط، 'to be' بيتحول إلى 'am/is/are' حسب الفاعل."
+  },
+  {
+    "question": "What are the forms of the verb \"to be\" in the present perfect tense?",
+    "options": ["Will be", "Has been/Have been", "Was/Were", "Am/Is/Are"],
+    "answer": "Has been/Have been",
+    "explanation": "في المضارع التام بنستخدم 'has been' أو 'have been' مع الفاعل المناسب."
+  },
+  {
+    "question": "We____to the beach last month.",
+    "options": ["Had Gone", "Went", "Gone", "GO"],
+    "answer": "Went",
+    "explanation": "الجملة في الماضي البسيط، و'went' هو الماضي البسيط للفعل 'go'."
+  },
+  {
+    "question": "Choose the correct present continuous form of \"sleep\"",
+    "options": ["Slept", "Is/are sleeping", "Sleeps", "Sleep"],
+    "answer": "Is/are sleeping",
+    "explanation": "الشكل الصحيح هو 'is/are sleeping' لأنه مضارع مستمر."
+  },
+  {
+    "question": "Choose the correct present continuous form of \"read\"",
+    "options": ["Road", "Read", "Is/are reading", "Reads"],
+    "answer": "Is/are reading",
+    "explanation": "لأن المطلوب مضارع مستمر، نستخدم 'is/are reading'."
+  },
+  {
+    "question": "Choose the correct past perfect form of \"play\"",
+    "options": ["Playing", "Has played", "Had played", "Having Played"],
+    "answer": "Had played",
+    "explanation": "الماضي التام بيتكون من 'had + past participle'، و'play' التصريف الثالث ليه هو 'played'."
+  },
+  {
+    "question": "What is the past simple form of the verb \"drink\"?",
+    "options": ["Road", "Read", "Drank", "Drink"],
+    "answer": "Drank",
+    "explanation": "الشكل الماضي البسيط للفعل 'drink' هو 'drank'."
+  },
+  {
+    "question": "What is the past perfect form of the verb \"take\"?",
+    "options": ["Taking", "Had taken", "Takes", "Took"],
+    "answer": "Had taken",
+    "explanation": "الماضي التام للفعل 'take' هو 'had taken'."
+  },
+  {
+    "question": "What is the tense of a sentence that contains \"last week\"?",
+    "options": ["Future Simple", "Past Simple", "Present Perfect", "Present Simple"],
+    "answer": "Past Simple",
+    "explanation": "عبارة 'last week' بتدل على الماضي، فبيكون الزمن هو الماضي البسيط."
+  },
+  {
+    "question": "\"Look!\" is an example of which tense?",
+    "options": ["Future Simple", "Past Simple", "Present Continuous", "Present Simple"],
+    "answer": "Present Continuous",
+    "explanation": "استخدام 'Look!' مع الفعل يدل على إن الحدث بيحصل دلوقتي، وده بيكون مضارع مستمر."
+  },
+  {
+    "question": "Put the verb \"see\" in the past perfect continuous tense:",
+    "options": ["Seen", "Has seen", "Saw", "Had been seeing"],
+    "answer": "Had been seeing",
+    "explanation": "الماضي التام المستمر بيتكوّن من 'had been + verb-ing'."
+  },
+  {
+    "question": "Choose the correct tense of the verb in the sentence: \"He is speaking.\"",
+    "options": ["Present Continuous", "Future Simple", "Past Simple", "Present Simple"],
+    "answer": "Present Continuous",
+    "explanation": "الجملة تحتوي على 'is + verb-ing'، وده زمن المضارع المستمر."
+  },
+  {
+    "question": "Put the verb \"draw\" in the past simple tense:",
+    "options": ["Draws", "Drawing", "Drew", "Drawn"],
+    "answer": "Drew",
+    "explanation": "الشكل الماضي البسيط للفعل 'draw' هو 'drew'."
+  },
+  {
+    "question": "Choose the correct present perfect form of \"have\":",
+    "options": ["Haves", "Has/have had", "Having", "Had"],
+    "answer": "Has/have had",
+    "explanation": "في المضارع التام نستخدم 'has/have had' حسب الفاعل."
+  },
+  {
+    "question": "Choose the correct present perfect form of the verb \"run\"",
+    "options": ["Ran", "Running", "Runs", "Has/have run"],
+    "answer": "Has/have run",
+    "explanation": "المضارع التام بيتكون من 'has/have + past participle'، والتصريف الثالث لـ 'run' هو 'run'."
+  }
+//////////////////////
+, {
+    "question": "What is the opposite of \"tall\"?",
+    "options": ["Big", "Short", "Fat", "Long"],
+    "answer": "Short",
+    "explanation": "كلمة 'Short' معناها قصير وهي عكس 'Tall' بمعنى طويل."
+  },
+  {
+    "question": "What is the opposite of \"up\"?",
+    "options": ["High", "Below", "Down", "Under"],
+    "answer": "Down",
+    "explanation": "'Down' معناها أسفل أو إلى تحت وهي العكس المباشر لـ 'Up'."
+  },
+  {
+    "question": "What is the opposite of \"in\"?",
+    "options": ["Inside", "Out", "Into", "On"],
+    "answer": "Out",
+    "explanation": "'Out' تعني بالخارج وهي عكس 'In' التي تعني بالداخل."
+  },
+  {
+    "question": "What is the opposite of the word \"dark\"?",
+    "options": ["Light", "Tall", "Small", "Cold"],
+    "answer": "Light",
+    "explanation": "'Light' تعني الضوء أو الإنارة وهي عكس 'Dark' التي تعني الظلام."
+  },
+{
+  "question": "What is the antonym of \"free\"?",
+  "options": ["Taken", "Open", "Ready", "Busy"],
+  "answer": "Busy",
+  "explanation": "كلمة 'Busy' تعني مشغول وهي العكس المناسب لكلمة 'Free' التي تعني متاح أو غير مشغول."
+}
+,
+  {
+    "question": "What is the opposite of \"Happy\"?",
+    "options": ["Fast", "Smart", "Sad", "Nice"],
+    "answer": "Sad",
+    "explanation": "'Sad' تعني حزين وهي عكس 'Happy' التي تعني سعيد."
+  },
+  {
+    "question": "What is the opposite of \"Old\"?",
+    "options": ["New", "Fresh", "Young", "Used"],
+    "answer": "New",
+    "explanation": "'New' تعني جديد وهي عكس 'Old' التي تعني قديم."
+  },
+  {
+    "question": "What is the opposite of \"fast\"?",
+    "options": ["Slow", "Speedy", "Rapid", "Quick"],
+    "answer": "Slow",
+    "explanation": "'Slow' تعني بطيء وهي عكس 'Fast' التي تعني سريع."
+  },
+  {
+    "question": "What is the opposite of \"quiet\"?",
+    "options": ["Still", "Peaceful", "Loud", "Calm"],
+    "answer": "Loud",
+    "explanation": "'Loud' تعني صاخب وهي عكس 'Quiet' التي تعني هادئ."
+  },
+  {
+    "question": "What is the opposite of Open?",
+    "options": ["Down", "Far", "Closed", "Wide"],
+    "answer": "Closed",
+    "explanation": "'Closed' تعني مغلق وهي عكس 'Open' التي تعني مفتوح."
+  },
+  {
+    "question": "What can you smell?",
+    "options": ["All of them", "Food 🍲", "Perfume 💐", "Flower 🌸"],
+    "answer": "All of them",
+    "explanation": "الطعام والعطر والزهور جميعها يمكن شمّها."
+  },
+  {
+    "question": "Which of these is fast and has wings?",
+    "options": ["Bird 🐦", "Cheetah 🐆", "Rabbit 🐰", "Horse 🐎"],
+    "answer": "Bird 🐦",
+    "explanation": "الطائر سريع وله أجنحة، أما الباقي فلا يطير."
+  },
+  {
+    "question": "A ____ is tall, long, and has many branches.",
+    "options": ["Grass 🌿", "Flower 🌸", "Plant 🪴", "Tree 🌳"],
+    "answer": "Tree 🌳",
+    "explanation": "الشجرة طويلة ولها فروع كثيرة على عكس العشب أو الزهور."
+  },
+  {
+    "question": "What is the smallest animal?",
+    "options": ["Bird 🐦", "Spider 🕷", "Ant 🐜", "Elephant 🐘"],
+    "answer": "Ant 🐜",
+    "explanation": "النملة هي الأصغر حجماً بين الخيارات المذكورة."
+  },
+  {
+    "question": "We travel with a ______.",
+    "options": ["Food", "Passport", "Bag", "License"],
+    "answer": "Passport",
+    "explanation": "جواز السفر مطلوب للسفر بين الدول."
+  },
+  {
+    "question": "Which animal is well known for its ability to mimic human actions?",
+    "options": ["Horse 🐎", "Dog 🐕", "Monkey 🐒", "Cat 🐈"],
+    "answer": "Monkey 🐒",
+    "explanation": "القرد معروف بقدرته على تقليد تصرفات الإنسان."
+  },
+  {
+    "question": "Which animal has wings and a beak?",
+    "options": ["Dog 🐶", "Fish 🐟", "Rabbit 🐰", "Bird 🐦"],
+    "answer": "Bird 🐦",
+    "explanation": "الطائر هو الكائن الوحيد هنا اللي عنده جناحات ومنقار."
+  },
+  { 
+    "question": "What is the fastest animal?",
+    "options": ["Lion 🦁", "Horse 🐎", "Cheetah 🐆", "Elephant 🐘"],
+    "answer": "Cheetah 🐆",
+    "explanation": "الفهد هو أسرع حيوان بري على الإطلاق."
+  },
+  {
+    "question": "Which animal is white and lays eggs?",
+    "options": ["Hen / chicken 🐔", "Dog 🐶", "Cat 🐱", "Cow 🐄"],
+    "answer": "Hen / chicken 🐔",
+    "explanation": "الدجاجة لونها أبيض وهي تبيض، عكس الحيوانات الأخرى."
+  },
+  {
+    "question": "What is the plural of \"Woman\"?",
+    "options": ["Wimen", "Womanses", "Women", "Womans"],
+    "answer": "Women",
+    "explanation": "جمع كلمة 'woman' هو 'women' وليس بإضافة 's' فقط."
+  }
+//////////////////////
+,
+{
+    "question": "What do we use to protect our skin from the sun?",
+    "options": ["Sunscreen", "Powder", "Soap", "Moisturizer"],
+    "answer": "Sunscreen",
+    "explanation": "نستخدم كريم الوقاية من الشمس (Sunscreen) لحماية بشرتنا من الأشعة الضارة."
+  },
+ {
+  "question": "People learn from ____.",
+  "options": ["Himself", "People", "Experiences", "Experience"],
+  "answer": "Experience",
+  "explanation": "الناس يتعلمون من الخبرة لأنها تمثل ما يكتسبه الإنسان من مواقف وتجارب."
+}
+,
+  {
+    "question": "Who was the poet of the prophet?",
+    "options": ["Ahmed Shawqi", "Imru' al-Qais", "Al-Mutanabbi", "Hassan bin Thabit"],
+    "answer": "Hassan bin Thabit",
+    "explanation": "حسان بن ثابت هو شاعر النبي صلى الله عليه وسلم ومدّاحه."
+  },
+  {
+    "question": "A farmer with a sick cow goes to____.",
+    "options": ["Teacher", "Veterinarian", "Chef", "Mechanic"],
+    "answer": "Veterinarian",
+    "explanation": "الطبيب البيطري هو المختص بعلاج الحيوانات."
+  },
+  {
+    "question": "The country that is known for making films is_____",
+    "options": ["Brazil", "Egypt", "United States of America", "China"],
+    "answer": "United States of America",
+    "explanation": "الولايات المتحدة مشهورة بصناعة السينما خاصة في هوليوود."
+  },
+  {
+    "question": "Dr. Magdy Yacoub is___.",
+    "options": ["Surgeon", "Lawyer", "Teacher", "Pharmacist"],
+    "answer": "Surgeon",
+    "explanation": "الدكتور مجدي يعقوب جراح قلب عالمي مصري."
+  },
+  {
+    "question": "What is the result of mixing red color with yellow color?",
+    "options": ["Green", "Brown", "Purple", "Orange"],
+    "answer": "Orange",
+    "explanation": "عند خلط اللون الأحمر مع الأصفر نحصل على اللون البرتقالي."
+  },
+  {
+    "question": "What do we wear on our eyes to protect them from the sun?",
+    "options": ["Blouse", "Sunglasses", "Mask", "Hat"],
+    "answer": "Sunglasses",
+    "explanation": "نرتدي النظارات الشمسية لحماية أعيننا من أشعة الشمس."
+  },
+  {
+    "question": "What is the correct spelling of the word in the sentence: \"The volcano _____\"?",
+    "options": ["Exploded", "Expoloded", "Exploaded", "Ecploded"],
+    "answer": "Exploded",
+    "explanation": "التهجئة الصحيحة لكلمة 'انفجر' بالإنجليزية هي Exploded."
+  },
+  {
+    "question": "When we eat, we use ____.",
+    "options": ["Ruler", "Brush", "Pen", "Spoon"],
+    "answer": "Spoon",
+    "explanation": "نستخدم الملعقة لتناول الطعام."
+  },
+  {
+    "question": "I ____ a headache.",
+    "options": ["Having", "Havee", "Have", "Has"],
+    "answer": "Have",
+    "explanation": "الشكل الصحيح للجملة هو I have a headache."
+  },
+  {
+    "question": "The _____ is the most important person in the company.",
+    "options": ["Manager", "Janitor", "Customer", "Driver"],
+    "answer": "Manager",
+    "explanation": "المدير هو الشخص الأكثر أهمية في الشركة من حيث الإدارة."
+  },
+  {
+    "question": "What is the device used to print the paper?",
+    "options": ["Monitor", "Camera", "Computer", "Printer"],
+    "answer": "Printer",
+    "explanation": "الطابعة هي الجهاز المستخدم لطباعة الورق."
+  },
+  {
+    "question": "What do we use after a shower to dry our bodies and hands?",
+    "options": ["Razor", "Towel", "Sponge", "Lotion"],
+    "answer": "Towel",
+    "explanation": "نستخدم المنشفة لتجفيف الجسم بعد الاستحمام."
+  },
+  {
+    "question": "What do we call the person who makes and sells bread?",
+    "options": ["Doctor", "Baker", "Teacher", "Worker"],
+    "answer": "Baker",
+    "explanation": "الشخص الذي يصنع ويبيع الخبز يُسمى خبّاز."
+  },
+  {
+    "question": "Made of metal and plastic and used in writing.",
+    "options": ["Ruler", "Eraser", "Pencil", "Pen"],
+    "answer": "Pen",
+    "explanation": "القلم مصنوع من البلاستيك والمعدن ويُستخدم في الكتابة."
+  },
+  {
+    "question": "When we mix black color with white color, the result is?",
+    "options": ["Red", "Grey", "Black", "White"],
+    "answer": "Grey",
+    "explanation": "عند خلط الأبيض والأسود نحصل على اللون الرمادي."
+  },
+  {
+    "question": "Where do we go to play sports?",
+    "options": ["School", "Mosque", "Club", "Home"],
+    "answer": "Club",
+    "explanation": "نذهب إلى النادي لممارسة الأنشطة الرياضية."
+  },
+  {
+    "question": "What is the season before summer? What is the season after the winter?",
+    "options": ["Winter", "Autumn", "Summer", "Spring"],
+    "answer": "Spring",
+    "explanation": "الربيع يأتي بعد الشتاء وقبل الصيف."
+  },
+  {
+    "question": "We feel cold in the ____.",
+    "options": ["Summer", "Winter", "Autumn", "Summer"],
+    "answer": "Winter",
+    "explanation": "نشعر بالبرد في فصل الشتاء بسبب انخفاض درجات الحرارة."
+  }
+///////////////
+, {
+      "question": "A sea animal with a shell",
+      "options": ["Fish", "Turtle", "Octopus", "Whale"],
+      "answer": "Turtle"
+    },
+    {
+      "question": "Resala is a big____.",
+      "options": ["Hospital", "Restaurant", "Charity", "School"],
+      "answer": "Charity"
+    },
+    {
+      "question": "___ help some people to see better.",
+      "options": ["Glasses", "Shoes", "Watches", "Gloves"],
+      "answer": "Glasses"
+    },
+    {
+      "question": "An animal climbs trees?",
+      "options": ["Dog", "Elephant", "Horse", "Monkey"],
+      "answer": "Monkey"
+    },
+    {
+      "question": "We use _ to navigate on the computer screen.",
+      "options": ["Keyboard", "Mouse", "Monitor", "Printer"],
+      "answer": "Mouse"
+    },
+    {
+      "question": "The person who helps the doctor?",
+      "options": ["Chef", "Teacher", "Nurse", "Driver"],
+      "answer": "Nurse"
+    },
+    {
+      "question": "A rubbery thing that is used in sports?",
+      "options": ["Ball", "Cap", "Net", "Bat"],
+      "answer": "Ball"
+    },
+    {
+      "question": "What is a piece of clothing worn above the trousers?",
+      "options": ["Shorts", "Pants", "Socks", "Shirt"],
+      "answer": "Shirt"
+    },
+    {
+      "question": "What does the athlete wear on his feet?",
+      "options": ["Boots", "Sneakers", "Sandals", "Slippers"],
+      "answer": "Sneakers"
+    },
+    {
+      "question": "What is the name of the toy described as a circular object that moves up and down on a long piece of string?",
+      "options": ["Doll", "Car", "Yo-yo", "Kite"],
+      "answer": "Yo-yo"
+    },
+    {
+      "question": "A big animal with a trunk and gray color",
+      "options": ["Camel", "Elephant", "Bear", "Zebra"],
+      "answer": "Elephant"
+    },
+    {
+      "question": "A pet animal that barks is",
+      "options": ["Rabbit", "Cat", "Dog", "Horse"],
+      "answer": "Dog"
+    },
+    {
+      "question": "Which animal lives in African forests and has a long neck?",
+      "options": ["Giraffe", "Lion", "Zebra", "Elephant"],
+      "answer": "Giraffe"
+    },
+    {
+      "question": "The person who works in petroleum engineering",
+      "options": ["Mechanical engineer", "Electrician", "Driver", "Petroleum engineer"],
+      "answer": "Petroleum engineer"
+    },
+    {
+      "question": "What do we wear on our hands or wrists?",
+      "options": ["Shoes", "Bracelet / Watch", "Hat", "Gloves"],
+      "answer": "Bracelet / Watch"
+    },
+    {
+      "question": "A calm person who doesn't laugh is:",
+      "options": ["Noisy", "Funny", "Shy", "Talkative"],
+      "answer": "Shy"
+    },
+    {
+      "question": "What do we use to see?",
+      "options": ["Eyes", "Nose", "Ears", "Mouth"],
+      "answer": "Eyes"
+    },
+    {
+      "question": "Hurghada is a tourist city with a beautiful__.",
+      "options": ["Forest", "Mountain", "Desert", "Beach"],
+      "answer": "Beach"
+    },
+    {
+      "question": "Which science studies countries?",
+      "options": ["Math", "Geography", "History", "Chemistry"],
+      "answer": "Geography"
+    },
+    {
+      "question": "Which fruit has a hard stone inside it?",
+      "options": ["Apple", "Banana", "Peach", "Grapes"],
+      "answer": "Peach"
+    }
+/////////////
+,{
+    "question": "What gives us milk and cheese?",
+    "options": ["Tiger", "Cow", "Horse", "Lion"],
+    "answer": "Cow"
+  },
+  {
+    "question": "What moves on water?",
+    "options": ["Car", "Train", "Boat", "Bicycle"],
+    "answer": "Boat"
+  },
+  {
+    "question": "What is an instrument made of plastic used for writing with ink?",
+    "options": ["Pen", "Brush", "Ruler", "Spoon"],
+    "answer": "Pen"
+  },
+  {
+    "question": "The sun goes down and the sky gets dark in the __.",
+    "options": ["Afternoon", "Noon", "Morning", "Evening"],
+    "answer": "Evening"
+  },
+  {
+    "question": "The _ of the film makes me laugh.",
+    "options": ["Fear", "Humor", "Drama", "Sadness"],
+    "answer": "Humor"
+  },
+  {
+    "question": "An animal called the desert ship.",
+    "options": ["Horse", "Elephant", "Camel", "Dog"],
+    "answer": "Camel"
+  },
+  {
+    "question": "A furry pet animal that lives in the house.",
+    "options": ["Cat", "Rabbit", "Bear", "Tiger"],
+    "answer": "Cat"
+  },
+  {
+    "question": "When it rains, we use____.",
+    "options": ["Hat", "Sunglasses", "Towel", "Umbrella"],
+    "answer": "Umbrella"
+  },
+  {
+    "question": "What produces eggs?",
+    "options": ["Duck", "Hen", "Cow", "Dog"],
+    "answer": "Hen"
+  },
+  {
+    "question": "Which insect produces honey?",
+    "options": ["Ant", "Fly", "Bee", "Butterfly"],
+    "answer": "Bee"
+  },
+  {
+    "question": "A red round fruit with black seeds inside is ____",
+    "options": ["Tomato", "Watermelon", "Apple", "Strawberry"],
+    "answer": "Watermelon"
+  },
+  {
+    "question": "Where can we put books?",
+    "options": ["Floor", "Bag", "Shelf", "Window"],
+    "answer": "Shelf"
+  },
+  {
+    "question": "A black and white animal is ____",
+    "options": ["Zebra", "Panda", "Cow", "Penguin"],
+    "answer": "Zebra"
+  },
+  {
+    "question": "When we leave we say ____",
+    "options": ["Hello", "Sorry", "Yes", "Goodbye"],
+    "answer": "Goodbye"
+  },
+  {
+    "question": "When we meet a person for the first time we say ____",
+    "options": ["Welcome back", "Nice to meet you", "See you", "Thanks"],
+    "answer": "Nice to meet you"
+  },
+  {
+    "question": "What is the name of the person who flies airplanes?",
+    "options": ["Driver", "Sailor", "Pilot", "Soldier"],
+    "answer": "Pilot"
+  },
+  {
+    "question": "What do we use to draw?",
+    "options": ["Brush", "Knife", "Needle", "Chalk"],
+    "answer": "Brush"
+  },
+  {
+    "question": "What do we call the son of a sister?",
+    "options": ["Cousin", "Brother", "Uncle", "Nephew"],
+    "answer": "Nephew"
+  },
+  {
+    "question": "The first meal is ____",
+    "options": ["Lunch", "Breakfast", "Dinner", "Snack"],
+    "answer": "Breakfast"
+  },
+  {
+    "question": "Something you wear on your face to protect against disease is a ____",
+    "options": ["Helmet", "Glasses", "Mask", "Scarf"],
+    "answer": "Mask"
+  }
+///////////////////////////
+, {
+    "question": "The day between Tuesday and Thursday is ____",
+    "options": ["Saturday", "Wednesday", "Friday", "Monday"],
+    "answer": "Wednesday"
+  },
+  {
+    "question": "How many days do we have in a week?",
+    "options": ["5", "6", "7", "4"],
+    "answer": "7"
+  },
+  {
+    "question": "Which month comes between September and November?",
+    "options": ["October", "August", "November", "September"],
+    "answer": "October"
+  },
+  {
+    "question": "Which month comes before April?",
+    "options": ["February", "May", "June", "March"],
+    "answer": "March"
+  },
+  {
+    "question": "Which month comes after January?",
+    "options": ["March", "February", "May", "June"],
+    "answer": "February"
+  },
+  {
+    "question": "A winter sport that we use to glide over snow is",
+    "options": ["Swimming", "Running", "Skiing", "Football"],
+    "answer": "Skiing"
+  },
+  {
+    "question": "A metallic object used to open a door is called a",
+    "options": ["Key", "Knife", "Ring", "Coin"],
+    "answer": "Key"
+  },
+  {
+    "question": "I have a cough, so I will go to the ____",
+    "options": ["School", "Pharmacy", "Office", "Doctor"],
+    "answer": "Doctor"
+  },
+  {
+    "question": "The color of the sky is ____",
+    "options": ["Green", "Blue", "Red", "Black"],
+    "answer": "Blue"
+  },
+  {
+    "question": "A smooth fruit with a seed inside is a ____",
+    "options": ["Apple", "Pear", "Mango", "Peach"],
+    "answer": "Mango"
+  },
+  {
+    "question": "Black and white photos of people often give a sense of ____",
+    "options": ["Modernity", "Old Fashioned", "Efficient", "Fashioned"],
+    "answer": "Old Fashioned"
+  },
+  {
+    "question": "Money lent by a bank is called a ____",
+    "options": ["Salary", "Debt", "Loan", "Bill"],
+    "answer": "Loan"
+  },
+  {
+    "question": "What do we use to print paper?",
+    "options": ["Printer", "Scanner", "Tablet", "Photocopier"],
+    "answer": "Printer"
+  },
+  {
+    "question": "Where do people usually go to buy food and groceries?",
+    "options": ["School", "Office", "Hospital", "Market"],
+    "answer": "Market"
+  },
+  {
+    "question": "It is used to store food and drink",
+    "options": ["Table", "Fridge", "Cupboard", "Microwave"],
+    "answer": "Fridge"
+  },
+  {
+    "question": "What is a very sweet, juicy fruit with an edible peel and a hard pit in the middle that grows on trees?",
+    "options": ["Peach", "Apple", "Orange", "Plum"],
+    "answer": "Peach"
+  },
+ 
+  {
+    "question": "What is used for cutting paper?",
+    "options": ["Knife", "Ruler", "Pen", "Scissors"],
+    "answer": "Scissors"
+  },
+  {
+    "question": "Where do we go when someone is sick?",
+    "options": ["Market", "Doctor", "School", "Park"],
+    "answer": "Doctor"
+  },
+  {
+    "question": "If you have an infection, what should you wear to protect others?",
+    "options": ["Cap", "Gloves", "Mask", "Glasses"],
+    "answer": "Mask"
+  },
+          {
+  "question": "What do you buy from the butcher?",
+  "options": ["Meat", "Fish", "Bread", "Cheese"],
+  "answer": "Meat"
+},
+///////////////////
+ {
+    "question": "The killer who murdered the child was sentenced to death.",
+    "options": ["Imprisonment", "Death", "Warning", "Fine"],
+    "answer": "Death"
+  },
+  {
+    "question": "A hot drink and black is called ____",
+    "options": ["Milk", "Juice", "Tea", "Coffee"],
+    "answer": "Tea"
+  },
+  {
+    "question": "What flowers represent peace?",
+    "options": ["Peace Lily", "Sunflower", "Tulip", "Daisy"],
+    "answer": "Peace Lily"
+  },
+  {
+    "question": "What do we sleep on?",
+    "options": ["Chair", "Sofa", "Table", "Bed"],
+    "answer": "Bed"
+  },
+  {
+    "question": "Which fruit is yellow in color and sour in taste?",
+    "options": ["Banana", "Lemon", "Watermelon", "Mango"],
+    "answer": "Lemon"
+  },
+  {
+    "question": "Is a purported disc-shaped UFO.",
+    "options": ["A satellite", "A drone", "A flying saucer", "A spaceship"],
+    "answer": "A flying saucer"
+  },
+  {
+    "question": "What has reduced the use of paper?",
+    "options": ["Computer", "Printer", "Book", "Notebook"],
+    "answer": "Computer"
+  },
+  {
+    "question": "What has two wheels and a motor?",
+    "options": ["Truck", "Car", "Bus", "Motorcycle"],
+    "answer": "Motorcycle"
+  },
+  {
+    "question": "Which fruit has a rough texture on the outside, is round, small, used to make juice, and has a red interior?",
+    "options": ["Apple", "Grapefruit", "Banana", "Watermelon"],
+    "answer": "Grapefruit"
+  },
+  {
+    "question": "What covers the window?",
+    "options": ["Pillow", "Carpet", "Curtain", "Tablecloth"],
+    "answer": "Curtain"
+  },
+  {
+    "question": "Cakes ____ are flour, eggs and butter.",
+    "options": ["Colors", "Ingredients", "Styles", "Sizes"],
+    "answer": "Ingredients"
+  },
+  {
+    "question": "What do we do after washing our hands?",
+    "options": ["We wear gloves", "We shake hands", "We dry them with a towel", "We wash our face"],
+    "answer": "We dry them with a towel"
+  },
+  {
+    "question": "If you went to the desert, you would live in",
+    "options": ["Tent", "House", "Cave", "Hotel"],
+    "answer": "Tent"
+  },
+  {
+    "question": "Muslims go to ___ to pray.",
+    "options": ["Church", "Temple", "School", "Mosque"],
+    "answer": "Mosque"
+  },
+  {
+    "question": "The metallic object you use to write words is long and thin and usually made of wood.",
+    "options": ["Eraser", "Pencil", "Ruler", "Marker"],
+    "answer": "Pencil"
+  },
+  {
+    "question": "What is the proper behavior when talking with your mouth full?",
+    "options": ["Funny", "Polite", "Impolite", "Respectful"],
+    "answer": "Impolite"
+  },
+  {
+    "question": "What should we buy for the new house?",
+    "options": ["Furniture", "Groceries", "Clothes", "Books"],
+    "answer": "Furniture"
+  },
+  {
+    "question": "An item made of glass or plastic",
+    "options": ["Plate", "Spoon", "Towel", "Cup"],
+    "answer": "Cup"
+  },
+  {
+    "question": "An item we use for vision",
+    "options": ["Shoes", "Glasses", "Hat", "Watch"],
+    "answer": "Glasses"
+  },
+  {
+    "question": "An item we use to cover the head",
+    "options": ["Gloves", "T-shirt", "Hat", "Scarf"],
+    "answer": "Hat"
+  }
+////////////////////
+,  {
+    "question": "Where do you go when you treat your teeth?",
+    "options": [
+      "Doctor",
+      "Dentist",
+      "Pharmacy",
+      "Hospital"
+    ],
+    "answer": "Dentist"
+  },
+  {
+    "question": "What is the large, round fruit with a green rind and sweet, red flesh inside?",
+    "options": [
+      "Orange",
+      "Apple",
+      "Watermelon",
+      "Peach"
+    ],
+    "answer": "Watermelon"
+  },
+  {
+    "question": "Which animal has long, narrow wings?",
+    "options": [
+      "Gull",
+      "Owl",
+      "Reptile",
+      "Mammal"
+    ],
+    "answer": "Gull"
+  },
+  {
+    "question": "We listen to the audio with headphones.",
+    "options": [
+      "False",
+      "True"
+    ],
+    "answer": "True"
+  },
+  {
+    "question": "What is worn on the hand?",
+    "options": [
+      "Shoes",
+      "Gloves",
+      "Shirt",
+      "Socks"
+    ],
+    "answer": "Gloves"
+  },
+  {
+    "question": "Choose the correct comparative form of the adjective: 'cold'",
+    "options": [
+      "more cold",
+      "coldier",
+      "colder",
+      "coldest"
+    ],
+    "answer": "colder"
+  },
+  {
+    "question": "She _____ get up early, but now she wakes up early.",
+    "options": [
+      "didn't use to",
+      "didn't use",
+      "wasn't use to",
+      "used to"
+    ],
+    "answer": "didn't use to"
+  },
+  {
+    "question": "He is interested ___ learning English.",
+    "options": [
+      "of",
+      "at",
+      "for",
+      "in"
+    ],
+    "answer": "in"
+  },
+  {
+    "question": "What is the correct past continuous form of the verb 'hear'?",
+    "options": [
+      "was hear",
+      "was hearing",
+      "were hear",
+      "hearing"
+    ],
+    "answer": "was hearing"
+  },
+  {
+    "question": "Choose the opposite of the word: 'kind'",
+    "options": [
+      "nice",
+      "polite",
+      "rude",
+      "helpful"
+    ],
+    "answer": "rude"
+  },
+  {
+    "question": "He ___ for two hours before the power went out.",
+    "options": [
+      "has been studying",
+      "had been studying",
+      "was studying",
+      "studied"
+    ],
+    "answer": "had been studying"
+  },
+  {
+    "question": "Choose the correct phrasal verb meaning: 'to resemble a family member'",
+    "options": [
+      "take over",
+      "take up",
+      "take after",
+      "take in"
+    ],
+    "answer": "take after"
+  },
+  {
+    "question": "The mother will __ her baby",
+    "options": [
+      "look after",
+      "look for",
+      "take off",
+      "take after"
+    ],
+    "answer": "look after"
+  },
+  {
+    "question": "The pen ______ on the desk.",
+    "options": [
+      "be",
+      "am",
+      "are",
+      "is"
+    ],
+    "answer": "is"
+  },
+  {
+    "question": "What is the synonym of 'grateful'?",
+    "options": [
+      "angry",
+      "thankful",
+      "lazy",
+      "careful"
+    ],
+    "answer": "thankful"
+  },
+  {
+    "question": "What is the adverb form of 'Late'?",
+    "options": [
+      "Later",
+      "Lately",
+      "Late",
+      "Last"
+    ],
+    "answer": "Late"
+  },
+  {
+    "question": "What is the adverb form of 'Fast'?",
+    "options": [
+      "Fast",
+      "Fastly",
+      "Faster",
+      "Quick"
+    ],
+    "answer": "Fast"
+  },
+  {
+    "question": "What is the adverb form of 'Hard'?",
+    "options": [
+      "Strong",
+      "Hardly",
+      "Harder",
+      "Hard"
+    ],
+    "answer": "Hard"
+  },
+  {
+    "question": "What is the adverb form of 'Far'?",
+    "options": [
+      "Farest",
+      "Far",
+      "Farly",
+      "Furtherly"
+    ],
+    "answer": "Far"
+  },
+  {
+    "question": "What is the adverb form of 'Bad'?",
+    "options": [
+      "Baddest",
+      "Worse",
+      "Badly",
+      "Wrong"
+    ],
+    "answer": "Badly"
+  }
+ /////////////
+,{
+    "question": "What is the adverb form of 'Good'?",
+    "options": [
+      "Goodly",
+      "Well",
+      "Better",
+      "Best"
+    ],
+    "answer": "Well"
+  },
+  {
+    "question": "Which of the following is an adverb?",
+    "options": [
+      "Book",
+      "Tall",
+      "Quickly",
+      "Beautiful"
+    ],
+    "answer": "Quickly"
+  },
+  {
+    "question": "The comparative form of 'happy' is ____",
+    "options": [
+      "Happier",
+      "More happy",
+      "Happiest",
+      "Happyer"
+    ],
+    "answer": "Happier"
+  },
+  {
+    "question": "Life in the city is ____ than life in the countryside.",
+    "options": [
+      "Gooder",
+      "More good",
+      "Best",
+      "Better"
+    ],
+    "answer": "Better"
+  },
+  {
+    "question": "How can we put 'expensive' in the comparative form?",
+    "options": [
+      "The most expensive",
+      "More expensive",
+      "Expensiver",
+      "Expensivest"
+    ],
+    "answer": "More expensive"
+  },
+  {
+    "question": "What is the dish you like ____?",
+    "options": [
+      "Many",
+      "Much",
+      "Most",
+      "Best"
+    ],
+    "answer": "Most"
+  },
+  {
+    "question": "What is the comparative form of 'big'?",
+    "options": [
+      "Bigger",
+      "More big",
+      "Biggest",
+      "Biger"
+    ],
+    "answer": "Bigger"
+  },
+  {
+    "question": "What is the superlative form of 'good'?",
+    "options": [
+      "Goodest",
+      "More good",
+      "Better",
+      "Best"
+    ],
+    "answer": "Best"
+  },
+  {
+    "question": "What is the comparative form of 'good'?",
+    "options": [
+      "More good",
+      "Better",
+      "Gooder",
+      "Best"
+    ],
+    "answer": "Better"
+  },
+  {
+    "question": "What is the superlative form of 'beautiful'?",
+    "options": [
+      "Very beautiful",
+      "More beautiful",
+      "The most beautiful",
+      "Beautifuller"
+    ],
+    "answer": "The most beautiful"
+  },
+  {
+    "question": "Which is the _______ exciting city in the world?",
+    "options": [
+      "More",
+      "Most",
+      "Much",
+      "Many"
+    ],
+    "answer": "Most"
+  },
+  {
+    "question": "What is the synonym of 'beautiful'?",
+    "options": [
+      "Dirty",
+      "Ugly",
+      "Pretty",
+      "Tired"
+    ],
+    "answer": "Pretty"
+  },
+  {
+    "question": "The opposite of 'rich' is ____",
+    "options": [
+      "Poor",
+      "Nice",
+      "Busy",
+      "High"
+    ],
+    "answer": "Poor"
+  },
+  {
+    "question": "The opposite of 'cruel' is____",
+    "options": [
+      "Weak",
+      "Quiet",
+      "Cold",
+      "Kind"
+    ],
+    "answer": "Kind"
+  },
+  {
+    "question": "The opposite of 'right' is____",
+    "options": [
+      "Left",
+      "Wrong",
+      "Fast",
+      "True"
+    ],
+    "answer": "Wrong"
+  },
+  {
+    "question": "The opposite of 'on' is____",
+    "options": [
+      "Start",
+      "In",
+      "Off",
+      "Top"
+    ],
+    "answer": "Off"
+  },
+  {
+    "question": "The opposite of 'old' is____",
+    "options": [
+      "New",
+      "Used",
+      "Classic",
+      "Ancient"
+    ],
+    "answer": "New"
+  },
+  {
+    "question": "The opposite of 'dry' is____",
+    "options": [
+      "Cool",
+      "Thick",
+      "Clean",
+      "Wet"
+    ],
+    "answer": "Wet"
+  },
+  {
+    "question": "The rabbit is fast, but the turtle is ____",
+    "options": [
+      "Quick",
+      "Slow",
+      "Happy",
+      "Smart"
+    ],
+    "answer": "Slow"
+  },
+  {
+    "question": "The opposite of 'strong' is____",
+    "options": [
+      "Heavy",
+      "Bright",
+      "Weak",
+      "Tall"
+    ],
+    "answer": "Weak"
+  },
+///////////////////
+{
+    "question": "The opposite of 'strong' is ____",
+    "options": ["Heavy", "Weak", "Bright", "Tall"],
+    "answer": "Weak",
+    "explanation": "كلمة strong معناها قوي، وعكسها هو weak اللي معناها ضعيف."
+  },
+  {
+    "question": "The antonym for 'push' is ____",
+    "options": ["Tap", "Stop", "Pull", "Throw"],
+    "answer": "Pull",
+    "explanation": "Push معناها يدفع، أما Pull فمعناها يسحب، وده هو العكس تمامًا."
+  },
+  {
+    "question": "The opposite of 'ugly' is ____",
+    "options": ["Beautiful", "Weird", "Boring", "Dark"],
+    "answer": "Beautiful",
+    "explanation": "Ugly معناها قبيح، وعكسها Beautiful اللي معناها جميل."
+  },
+  {
+    "question": "What is a synonym for 'short'?",
+    "options": ["Open", "Fast", "Tall", "Brief"],
+    "answer": "Brief",
+    "explanation": "Short معناها قصير، وBrief معناها مختصر، وهي مرادف ليها."
+  },
+  {
+    "question": "The opposite of 'careful' is ____",
+    "options": ["Kind", "Careless", "Neat", "Calm"],
+    "answer": "Careless",
+    "explanation": "Careful معناها حذر أو منتبه، وعكسها Careless يعني مهمل."
+  },
+  {
+    "question": "The opposite of the word 'full' is ____",
+    "options": ["Big", "Filled", "Empty", "Complete"],
+    "answer": "Empty",
+    "explanation": "Full معناها ممتلئ، وعكسها Empty يعني فارغ."
+  },
+  {
+    "question": "The opposite of the word 'happy' is ____",
+    "options": ["Sad", "Glad", "Joyful", "Kind"],
+    "answer": "Sad",
+    "explanation": "Happy معناها سعيد، وعكسها Sad اللي معناها حزين."
+  },
+  {
+    "question": "The opposite of the word 'big' is ____",
+    "options": ["Huge", "Tall", "Large", "Small"],
+    "answer": "Small",
+    "explanation": "Big معناها كبير، وعكسها Small يعني صغير."
+  },
+  {
+    "question": "The opposite of the word 'light' is ____",
+    "options": ["Lamp", "Darkness", "Brightness", "Clear"],
+    "answer": "Darkness",
+    "explanation": "Light معناها ضوء، وعكسها Darkness يعني الظلام."
+  },
+  {
+    "question": "What is the opposite of 'up'?",
+    "options": ["Top", "Rise", "Down", "Open"],
+    "answer": "Down",
+    "explanation": "Up معناها أعلى، وعكسها Down يعني أسفل."
+  },
+  {
+    "question": "The plural of 'man' is ____",
+    "options": ["Mans", "Men", "Males", "Mens"],
+    "answer": "Men",
+    "explanation": "Man معناها رجل، وجمعها الصحيح هو Men."
+  },
+  {
+    "question": "The plural of 'fox' is ____",
+    "options": ["Foes", "Foxs", "Foxes", "Fox"],
+    "answer": "Foxes",
+    "explanation": "Fox معناها ثعلب، وجمعها الصحيح Foxes بإضافة es."
+  },
+  {
+    "question": "The plural of 'foot' is ____",
+    "options": ["Feet", "Foots", "Feets", "Foot"],
+    "answer": "Feet",
+    "explanation": "Foot معناها قدم، وجمعها الصحيح هو Feet."
+  },
+  {
+    "question": "What is the plural of the word 'baby'?",
+    "options": ["Baby", "Babyes", "Babys", "Babies"],
+    "answer": "Babies",
+    "explanation": "Baby بتنتهي بـ y وقبلها حرف ساكن، فبنشيل y ونضيف ies عشان نجيب الجمع الصحيح: Babies."
+  },
+  {
+    "question": "What is the plural of the word 'foot'?",
+    "options": ["Foots", "Feet", "Feets", "Foot"],
+    "answer": "Feet",
+    "explanation": "Foot معناها قدم، والجمع غير منتظم بيكون Feet."
+  },
+  {
+    "question": "What is the plural of the word 'child'?",
+    "options": ["Childes", "Childs", "Children", "Childer"],
+    "answer": "Children",
+    "explanation": "Child معناها طفل، وجمعها غير منتظم بيكون Children."
+  },
+  {
+    "question": "What is the plural of 'mouse'?",
+    "options": ["Mice", "Mouses", "Mices", "Mouse"],
+    "answer": "Mice",
+    "explanation": "Mouse معناها فأر، وجمعها غير منتظم بيكون Mice."
+  },
+  {
+    "question": "What is the plural of 'book'?",
+    "options": ["Book", "Boks", "Bookes", "Books"],
+    "answer": "Books",
+    "explanation": "Book معناها كتاب، والجمع الصحيح بإضافة s: Books."
+  },
+  {
+    "question": "Select the most appropriate synonym of 'Beautiful'",
+    "options": ["Obnoxious", "Pretty", "Despicable", "Detestable"],
+    "answer": "Pretty",
+    "explanation": "Pretty معناها جميل، وهي أقرب مرادف لكلمة Beautiful."
+  },
+  {
+    "question": "What is the antonym of 'full'?",
+    "options": ["Long", "Clean", "Empty", "Old"],
+    "answer": "Empty",
+    "explanation": "Full معناها ممتلئ، وعكسها Empty يعني فارغ."
+  },
+////////////
+ {
+    "question": "What is the antonym of 'full'?",
+    "options": ["Clean", "Empty", "Long", "Old"],
+    "answer": "Empty",
+    "explanation": "كلمة full معناها ممتلئ، وعكسها هو empty (فارغ)."
+  },
+  {
+    "question": "What is the opposite of 'spend'?",
+    "options": ["Buy", "Lose", "Save", "Waste"],
+    "answer": "Save",
+    "explanation": "Spend معناها ينفق، وعكسها Save (يدخر)."
+  },
+  {
+    "question": "What is the opposite of 'happy'?",
+    "options": ["Sad", "Angry", "Crazy", "Tired"],
+    "answer": "Sad",
+    "explanation": "Happy معناها سعيد، وعكسها Sad (حزين)."
+  },
+  {
+    "question": "The opposite of 'soft' is ____.",
+    "options": ["Smooth", "Firm", "Rough", "Hard"],
+    "answer": "Hard",
+    "explanation": "Soft معناها ناعم أو لين، وعكسها Hard (صلب)."
+  },
+  {
+    "question": "Which question word is used to ask about people?",
+    "options": ["What", "Who", "Where", "Why"],
+    "answer": "Who",
+    "explanation": "نستخدم Who للسؤال عن الأشخاص."
+  },
+  {
+    "question": "The opposite of 'in' is ____.",
+    "options": ["Up", "Over", "Out", "Inside"],
+    "answer": "Out",
+    "explanation": "In معناها داخل، وعكسها Out (خارج)."
+  },
+  {
+    "question": "I can open the door with a ____.",
+    "options": ["Key", "Door", "Lock", "Handle"],
+    "answer": "Key",
+    "explanation": "نستخدم المفتاح (Key) لفتح الباب."
+  },
+  {
+    "question": "Which fruit is round and smooth that contains a pit?",
+    "options": ["Carrot", "Peach", "Banana", "Orange"],
+    "answer": "Peach",
+    "explanation": "Peach (خوخ) فاكهة مستديرة وملساء وبداخلها نواة."
+  },
+  {
+    "question": "What is the past perfect of 'go'?",
+    "options": ["Goes", "Went", "Had gone", "Going"],
+    "answer": "Had gone",
+    "explanation": "الماضي التام من go هو had gone."
+  },
+  {
+    "question": "What is the opposite of 'dark'?",
+    "options": ["Cold", "Light", "Grey", "Black"],
+    "answer": "Light",
+    "explanation": "Dark معناها مظلم، وعكسها Light (مضيء)."
+  },
+  {
+    "question": "Which season comes between summer and winter?",
+    "options": ["Winter", "Spring", "Autumn", "Summer"],
+    "answer": "Autumn",
+    "explanation": "الخريف (Autumn) يأتي بين الصيف والشتاء."
+  },
+  {
+    "question": "What is the opposite of 'short'?",
+    "options": ["Long", "Cold", "Light", "Tight"],
+    "answer": "Long",
+    "explanation": "Short معناها قصير، وعكسها Long (طويل)."
+  },
+  {
+    "question": "What is the opposite of 'weak'?",
+    "options": ["Poor", "Soft", "Rough", "Strong"],
+    "answer": "Strong",
+    "explanation": "Weak معناها ضعيف، وعكسها Strong (قوي)."
+  },
+  {
+    "question": "Which sentence uses the correct article?",
+    "options": [
+      "She bought a apple.",
+      "He is an honest man.",
+      "I saw an dog in the park.",
+      "This is unique idea."
+    ],
+    "answer": "He is an honest man.",
+    "explanation": "an تستخدم قبل كلمات تبدأ بصوت حرف متحرك مثل honest."
+  },
+  {
+    "question": "Where is…?",
+    "options": ["At Tanta", "From Tanta", "In Tanta", "To Tanta"],
+    "answer": "In Tanta",
+    "explanation": "نستخدم in مع أسماء المدن مثل In Tanta."
+  },
+  {
+    "question": "I go to school ___ bus.",
+    "options": ["By", "On", "In", "At"],
+    "answer": "By",
+    "explanation": "By تُستخدم مع وسائل النقل بدون أدوات تعريف."
+  },
+  {
+    "question": "Which preposition is used before days?",
+    "options": ["In", "At", "To", "On"],
+    "answer": "On",
+    "explanation": "نستخدم on قبل الأيام مثل on Monday."
+  },
+  {
+    "question": "I ate ___ the restaurant.",
+    "options": ["On", "At", "In", "To"],
+    "answer": "At",
+    "explanation": "At تُستخدم مع الأماكن العامة مثل المطاعم."
+  },
+  {
+    "question": "Go to the park ___ my friend.",
+    "options": ["To", "By", "With", "At"],
+    "answer": "With",
+    "explanation": "With تعني مع شخص آخر."
+  },
+////////////////////
+
+ {
+    "question": "Who comes to Egypt to see its monuments and visit its tourist attractions?",
+    "options": ["Doctors", "Tourists", "Engineers", "Farmers"],
+    "answer": "Tourists",
+    "explanation": "السياح هم اللي بييجوا مصر علشان يشوفوا الآثار ويزوروا الأماكن السياحية."
+  },
+  {
+    "question": "What is the largest animal in the world?",
+    "options": ["Giraffe", "Elephant", "Blue Whale", "Great White Shark"],
+    "answer": "Blue Whale",
+    "explanation": "الحوت الأزرق هو أكبر حيوان على وجه الأرض."
+  },
+  {
+    "question": "The plane flew ___ the mountains.",
+    "options": ["Over", "Under", "In", "With"],
+    "answer": "Over",
+    "explanation": "كلمة 'Over' معناها فوق أو أعلى، ودي بتستخدم لوصف الطيران فوق الجبال."
+  },
+  {
+    "question": "The cat is hiding ___ the table.",
+    "options": ["Over", "On", "With", "Under"],
+    "answer": "Under",
+    "explanation": "'Under' معناها تحت، ودي بنستخدمها لما الحاجة تبقى أسفل شيء تاني."
+  },
+  {
+    "question": "We were talking ___ the problem.",
+    "options": ["In", "About", "With", "From"],
+    "answer": "About",
+    "explanation": "'About' معناها عن، وبتستخدم لما بنتكلم عن موضوع معين."
+  },
+  {
+    "question": "This gift is ___ you.",
+    "options": ["To", "With", "For", "At"],
+    "answer": "For",
+    "explanation": "'For' معناها من أجل، وبتدل إن الحاجة موجهة لشخص معين."
+  },
+  {
+    "question": "I wrote the note ___ a pen.",
+    "options": ["With", "To", "In", "At"],
+    "answer": "With",
+    "explanation": "'With' معناها باستخدام، وبتدل على الأداة اللي استُخدمت في الكتابة."
+  },
+  {
+    "question": "We traveled ___ car to Alexandria.",
+    "options": ["On", "To", "With", "By"],
+    "answer": "By",
+    "explanation": "'By' بتستخدم مع وسائل المواصلات لما نتكلم عن طريقة السفر."
+  },
+  {
+    "question": "In Europe, banks close ___ 3:30 PM.",
+    "options": ["In", "At", "On", "From"],
+    "answer": "At",
+    "explanation": "'At' بتستخدم لتحديد الوقت بالساعة."
+  },
+  {
+    "question": "Which preposition is used with the verb \"crashed\"?",
+    "options": ["At", "On", "Into", "From"],
+    "answer": "Into",
+    "explanation": "'Crashed into' معناها اصطدم في، وده الاستخدام الصحيح مع الفعل."
+  },
+  {
+    "question": "_____ is?",
+    "options": ["When", "Where", "Who", "Why"],
+    "answer": "Where",
+    "explanation": "'Where' بتُستخدم للسؤال عن المكان."
+  },
+  {
+    "question": "Ahmad wanted to read ___ comic book.",
+    "options": ["an", "the", "a", "some"],
+    "answer": "a",
+    "explanation": "'A' بتُستخدم قبل الكلمات اللي بتبدأ بصوت ساكن، وكلمة 'comic' بتبدأ بصوت ساكن."
+  },
+  {
+    "question": "If you were ___ pair of glasses.",
+    "options": ["a", "an", "some", "the"],
+    "answer": "a",
+    "explanation": "'A pair of glasses' تعتبر مفرد في الاستخدام رغم إنها شكل مزدوج، فبنستخدم 'a'."
+  },
+  {
+    "question": "___ do you live?",
+    "options": ["When", "What", "Who", "Where"],
+    "answer": "Where",
+    "explanation": "'Where' بتُستخدم للسؤال عن المكان اللي الشخص عايش فيه."
+  },
+  {
+    "question": "___ car is this?",
+    "options": ["Where", "Whose", "Who", "What"],
+    "answer": "Whose",
+    "explanation": "'Whose' معناها 'لمن' وبتُستخدم للسؤال عن الملكية."
+  },
+  {
+    "question": "What is the past participle of \"do\"?",
+    "options": ["Do", "Did", "Done", "Doing"],
+    "answer": "Done",
+    "explanation": "التصريف الثالث للفعل 'do' هو 'done'."
+  },
+  {
+    "question": "What is the past participle of \"write\"?",
+    "options": ["Written", "Wrote", "Write", "Writing"],
+    "answer": "Written",
+    "explanation": "التصريف الثالث للفعل 'write' هو 'written'."
+  },
+  {
+    "question": "What is the past participle of \"see\"?",
+    "options": ["Seeing", "See", "Saw", "Seen"],
+    "answer": "Seen",
+    "explanation": "التصريف الثالث للفعل 'see' هو 'seen'."
+  },
+  {
+    "question": "What is the past participle of \"eat\"?",
+    "options": ["Ate", "Eaten", "Eating", "Eat"],
+    "answer": "Eaten",
+    "explanation": "التصريف الثالث للفعل 'eat' هو 'eaten'."
+  },
+  {
+    "question": "What is the past participle of \"go\"?",
+    "options": ["Go", "Went", "Gone", "Going"],
+    "answer": "Gone",
+    "explanation": "التصريف الثالث للفعل 'go' هو 'gone'."
+  },
+///////////////
+{
+    "question": "Choose the countable nouns from the following options:",
+    "options": ["Chair", "Water", "Air", "Milk"],
+    "answer": "Chair",
+    "explanation": "Chair هو اسم معدود، لذلك هو الإجابة الصحيحة."
+  },
+  {
+    "question": "Choose the uncountable nouns from the following options:",
+    "options": ["Book", "Rice", "Pen", "Notebook"],
+    "answer": "Rice",
+    "explanation": "Rice اسم غير معدود، لذلك هو الإجابة الصحيحة."
+  },
+  {
+    "question": "Choose the countable noun from the following options:",
+    "options": ["Water", "Sugar", "Air", "Men"],
+    "answer": "Men",
+    "explanation": "Men جمع كلمة Man، وهي اسم معدود."
+  },
+  {
+    "question": "Which of the following is a demonstrative pronoun that refers to something near and singular?",
+    "options": ["Those", "This", "These", "That"],
+    "answer": "This",
+    "explanation": "This يُستخدم للإشارة لشيء مفرد وقريب."
+  },
+  {
+    "question": "Which word is correct to use with 'information'?",
+    "options": ["Much", "Many", "Some", "Few"],
+    "answer": "Much",
+    "explanation": "كلمة Information اسم غير معدود، لذلك نستخدم معها 'Much'."
+  },
+  {
+    "question": "Which word is correct to use with 'water'?",
+    "options": ["Much", "Many", "Some", "Few"],
+    "answer": "Much",
+    "explanation": "Water اسم غير معدود، لذلك نستخدم معه 'Much'."
+  },
+  {
+    "question": "Which word is correct to use with 'apples'?",
+    "options": ["Much", "Many", "Some", "Few"],
+    "answer": "Many",
+    "explanation": "Apples اسم معدود، لذلك نستخدم معه 'Many'."
+  },
+  {
+    "question": "Which word is correct to use with 'milk'?",
+    "options": ["Much", "Many", "Some", "Few"],
+    "answer": "Much",
+    "explanation": "Milk اسم غير معدود، لذلك نستخدم معه 'Much'."
+  },
+  {
+    "question": "Which word is correct to use with 'chairs'?",
+    "options": ["Much", "Many", "Some", "Few"],
+    "answer": "Many",
+    "explanation": "Chairs اسم معدود، لذلك نستخدم معه 'Many'."
+  },
+  {
+    "question": "Who designs and plans buildings?",
+    "options": ["Pilot", "Lawyer", "Doctor", "Architect"],
+    "answer": "Architect",
+    "explanation": "المهندس المعماري هو من يصمم ويخطط المباني."
+  },
+  {
+    "question": "What is the opposite of 'thick'?",
+    "options": ["Large", "Thin", "Wide", "Tall"],
+    "answer": "Thin",
+    "explanation": "العكس المباشر لـ thick هو thin ويعني رفيع."
+  },
+  {
+    "question": "Complete the sentence: She ______both when her friend called her.",
+    "options": ["is talk", "talks", "was talking", "talked"],
+    "answer": "was talking",
+    "explanation": "نستخدم was talking لأنها تدل على حدث مستمر في الماضي أثناء حدوث شيء آخر."
+  },
+  {
+    "question": "He was driving ____ it started to rain.",
+    "options": ["Before", "Because", "When", "After"],
+    "answer": "When",
+    "explanation": "نستخدم When عند حدوث شيء أثناء حدث آخر مستمر."
+  },
+  {
+    "question": "____ I was walking to school, I saw a cat.",
+    "options": ["While", "So", "If", "Because"],
+    "answer": "While",
+    "explanation": "نستخدم While مع حدث مستمر في الماضي."
+  },
+  {
+    "question": "She was studying ____ her brother was playing outside.",
+    "options": ["Because", "So", "Before", "While"],
+    "answer": "While",
+    "explanation": "نستخدم While لربط حدثين مستمرين في نفس الوقت في الماضي."
+  },
+  {
+    "question": "Example of a possessive pronoun:",
+    "options": ["Hers", "My", "Their", "Us"],
+    "answer": "Hers",
+    "explanation": "Hers هو ضمير ملكية يُستخدم بدون اسم بعده."
+  },
+  {
+    "question": "Which of the following is a possessive pronoun?",
+    "options": ["She", "We", "Mine", "They"],
+    "answer": "Mine",
+    "explanation": "Mine ضمير ملكية يدل على أن الشيء يخص المتكلم."
+  },
+  {
+    "question": "Choose the correct possessive pronoun:",
+    "options": ["You", "Them", "Us", "Yours"],
+    "answer": "Yours",
+    "explanation": "Yours يُستخدم للإشارة إلى ملكية شيء للشخص الذي يتم التحدث إليه."
+  },
+  {
+    "question": "She has lived here ___ 2010.",
+    "options": ["Since", "For", "At", "In"],
+    "answer": "Since",
+    "explanation": "Since تُستخدم مع وقت محدد مثل سنة أو تاريخ."
+  },
+  {
+    "question": "They have been married ___ ten years.",
+    "options": ["Since", "For", "At", "In"],
+    "answer": "For",
+    "explanation": "For تُستخدم مع مدة زمنية مثل عدد السنين."
+  },
+/////////////////
+
+
+{
+    "question": "What day comes between Monday and Wednesday?",
+    "options": ["Thursday", "Tuesday", "Sunday", "Friday"],
+    "answer": "Tuesday",
+    "explanation": "الثلاثاء هو اليوم الذي يأتي بين الإثنين والأربعاء."
+  },
+  {
+    "question": "What do we use to listen?",
+    "options": ["Ears", "Eyes", "Hands", "Mouth"],
+    "answer": "Ears",
+    "explanation": "نستخدم الأذنين لسماع الأصوات."
+  },
+  {
+    "question": "What season comes after winter and before fall?",
+    "options": ["Winter", "Autumn", "Summer", "Spring"],
+    "answer": "Spring",
+    "explanation": "فصل الربيع يأتي بعد الشتاء وقبل الخريف."
+  },
+  {
+    "question": "Which item is made of glass?",
+    "options": ["Spoon", "Chair", "Cup", "Pencil"],
+    "answer": "Cup",
+    "explanation": "الكوب يمكن أن يكون مصنوعًا من الزجاج."
+  },
+  {
+    "question": "What is the past simple of 'go'?",
+    "options": ["Went", "Gone", "Goes", "Going"],
+    "answer": "Went",
+    "explanation": "Went هو الماضي البسيط للفعل 'go'."
+  },
+  {
+    "question": "Choose the correct form after 'Did':",
+    "options": [
+      "Did you go to school?",
+      "Did you went to school?",
+      "Did you going to school?",
+      "Did you gone to school?"
+    ],
+    "answer": "Did you go to school?",
+    "explanation": "بعد 'Did' يأتي الفعل في المصدر بدون إضافات."
+  },
+  {
+    "question": "Choose the correct sentence with 'used to':",
+    "options": [
+      "She is used to live in Cairo.",
+      "She used living in Cairo.",
+      "She use to living in Cairo.",
+      "She used to live in Cairo."
+    ],
+    "answer": "She used to live in Cairo.",
+    "explanation": "'used to' تُستخدم للتعبير عن عادة في الماضي."
+  },
+  {
+    "question": "Which of the following is an example of an interjection?",
+    "options": ["Quickly", "Book", "Wow", "Write"],
+    "answer": "Wow",
+    "explanation": "Wow أداة تعجب تُستخدم للتعبير عن المفاجأة."
+  },
+  {
+    "question": "Which pronoun is used for plural nouns?",
+    "options": ["He", "They", "I", "It"],
+    "answer": "They",
+    "explanation": "'They' تُستخدم مع الأسماء الجمع."
+  },
+  {
+    "question": "Which pronoun is used for both singular and plural nouns?",
+    "options": ["You", "He", "We", "It"],
+    "answer": "You",
+    "explanation": "'You' تُستخدم مع المفرد والجمع."
+  },
+  {
+    "question": "Which of the following is a possessive pronoun?",
+    "options": ["He", "They", "Mine", "She"],
+    "answer": "Mine",
+    "explanation": "'Mine' هو ضمير ملكية يدل على أن شيئًا ما يخص المتكلم."
+  },
+  {
+    "question": "Which of the following is a reflexive pronoun?",
+    "options": ["You", "He", "I", "Myself"],
+    "answer": "Myself",
+    "explanation": "'Myself' هو ضمير انعكاسي يُستخدم عندما يكون الفاعل والمفعول نفس الشخص."
+  },
+  {
+    "question": "I love _____ sister.",
+    "options": ["His", "My", "Their", "Me"],
+    "answer": "My",
+    "explanation": "'My' ضمير ملكية يشير إلى أن الأخت تخص المتكلم."
+  },
+  {
+    "question": "Which is an example of a subordinating conjunction?",
+    "options": ["And", "Because", "Yet", "Either...Or"],
+    "answer": "Because",
+    "explanation": "'Because' أداة ربط ثانوية تُستخدم لتوضيح السبب."
+  },
+  {
+    "question": "Where _________ ? (In London)",
+    "options": [
+      "are you born",
+      "were you born",
+      "have you been born",
+      "did you born"
+    ],
+    "answer": "were you born",
+    "explanation": "الصيغة الصحيحة للسؤال عن مكان الميلاد في الماضي هي 'were you born'."
+  },
+  {
+    "question": "______ his leg is sprained, he plays football.",
+    "options": ["And", "So", "Because", "Although"],
+    "answer": "Although",
+    "explanation": "'Although' تُستخدم للتعبير عن التناقض بين الجملتين."
+  },
+  {
+    "question": "Which of the following is a coordinating conjunction?",
+    "options": ["unless", "for", "although", "until"],
+    "answer": "for",
+    "explanation": "'for' أداة ربط تنسيقية تربط جملتين متساويتين في القوة."
+  },
+  {
+    "question": "My father sleeps early _____ he is very tired.",
+    "options": ["because", "but", "or", "unless"],
+    "answer": "because",
+    "explanation": "'because' تُستخدم لتوضيح السبب في النوم مبكرًا."
+  },
+  {
+    "question": "If it rains, we ______ at home.",
+    "options": ["stay", "stayed", "will stay", "staying"],
+    "answer": "will stay",
+    "explanation": "في الحالة الأولى من جمل الشرط: if + مضارع بسيط، والنتيجة will + فعل."
+  },
+  {
+    "question": "If you study hard, you ______ the exam.",
+    "options": ["passed", "will pass", "passes", "passing"],
+    "answer": "will pass",
+    "explanation": "في الحالة الأولى من الشرط، نستخدم will + verb في الجملة الثانية."
+  },
+///////////////////
+  {
+    "question": "What is the opposite of 'clean'?",
+    "options": ["Dirty", "Ugly", "Messy", "Black"],
+    "answer": "Dirty",
+    "explanation": "Dirty هو العكس الصحيح لكلمة clean."
+  },
+  {
+    "question": "It is an object pronoun used to refer to a group of people including the speaker.",
+    "options": ["Me", "Them", "You", "Us"],
+    "answer": "Us",
+    "explanation": "Us هو الضمير الذي يشير إلى مجموعة من الأشخاص من ضمنهم المتكلم."
+  },
+  {
+    "question": "What is the opposite of 'early'?",
+    "options": ["Slow", "Late", "Lazy", "Cold"],
+    "answer": "Late",
+    "explanation": "Late هو العكس الصحيح لكلمة early."
+  },
+  {
+    "question": "What is the opposite of 'hot'?",
+    "options": ["Wet", "Windy", "Cold", "Snowy"],
+    "answer": "Cold",
+    "explanation": "Cold هو العكس الصحيح لكلمة hot."
+  },
+  {
+    "question": "Which is the comparative form of the word 'cold'?",
+    "options": ["Coldest", "Colder", "Cool", "Cold"],
+    "answer": "Colder",
+    "explanation": "صيغة المقارنة من cold هي colder عند المقارنة بين شيئين."
+  },
+  {
+    "question": "Something white and we drink it in the morning is_____?",
+    "options": ["Juice", "Water", "Tea", "Milk"],
+    "answer": "Milk",
+    "explanation": "Milk هو المشروب الأبيض الذي نتناوله في الصباح غالبًا."
+  },
+  {
+    "question": "Something we open when it rains is_____?",
+    "options": ["Umbrella", "Window", "Door", "Coat"],
+    "answer": "Umbrella",
+    "explanation": "Umbrella هي ما نستخدمه للحماية من المطر."
+  },
+  {
+    "question": "Which of the following is a subject pronoun?",
+    "options": ["His", "Them", "Myself", "They"],
+    "answer": "They",
+    "explanation": "They هو ضمير فاعل يُستخدم كبديل عن الاسم في بداية الجملة."
+  },
+  {
+    "question": "Which of the following is a possessive pronoun?",
+    "options": ["Mine", "Me", "Him", "Your"],
+    "answer": "Mine",
+    "explanation": "Mine هو ضمير ملكية يُستخدم للدلالة على الملكية بدون اسم بعدها."
+  },
+  {
+    "question": "Which of the following is a reflexive pronoun?",
+    "options": ["Yourself", "They", "Ours", "He"],
+    "answer": "Yourself",
+    "explanation": "Yourself هو ضمير منعكس يُستخدم عندما يعود الفعل على نفس الفاعل."
+  },
+  {
+    "question": "Which of the following is a possessive adjective?",
+    "options": ["Hers", "Her", "She", "Him"],
+    "answer": "Her",
+    "explanation": "Her تُستخدم كصفة ملكية تأتي قبل الاسم مثل: her book."
+  },
+  {
+    "question": "Which of the following is an object pronoun?",
+    "options": ["Ourselves", "We", "Us", "Our"],
+    "answer": "Us",
+    "explanation": "Us هو ضمير مفعول يُستخدم بعد الفعل أو حرف الجر."
+  },
+  {
+    "question": "Which of the following is a possessive pronoun?",
+    "options": ["Your", "Yours", "You're", "You"],
+    "answer": "Yours",
+    "explanation": "Yours هو ضمير ملكية يُستخدم بدون اسم بعده."
+  },
+  {
+    "question": "Which of the following is a subject pronoun?",
+    "options": ["My", "Mine", "Me", "I"],
+    "answer": "I",
+    "explanation": "I هو ضمير فاعل يُستخدم كبداية الجملة."
+  },
+  {
+    "question": "Which fruit is soft and furry?",
+    "options": ["Banana", "Peach", "Apple", "Grapes"],
+    "answer": "Peach",
+    "explanation": "الخوخ يتميز بقشرته الناعمة والمكسوة بشعر خفيف."
+  },
+  {
+    "question": "What is the opposite of the word 'strong'?",
+    "options": ["Powerful", "Tough", "Fragile", "Solid"],
+    "answer": "Fragile",
+    "explanation": "Fragile هو العكس الصحيح لكلمة strong."
+  },
+  {
+    "question": "Which color is made by mixing red and yellow?",
+    "options": ["Orange", "Green", "Blue", "Purple"],
+    "answer": "Orange",
+    "explanation": "اللون الناتج من خلط الأحمر والأصفر هو البرتقالي."
+  },
+  {
+    "question": "What do we use to cut paper?",
+    "options": ["Ruler", "Pen", "Scissors", "Glue"],
+    "answer": "Scissors",
+    "explanation": "نستخدم المقص لقص الورق."
+  },
+  {
+    "question": "What is the past simple of the verb 'go'?",
+    "options": ["Goes", "Went", "Go", "Going"],
+    "answer": "Went",
+    "explanation": "الماضي البسيط من go هو went."
+  },
+  {
+    "question": "Which tool do we use to open the can?",
+    "options": ["Spatula", "Fork", "Spoon", "Knife"],
+    "answer": "Knife",
+    "explanation": "الأداة المناسبة لفتح العلبة هي السكين."
+  },
+//////////////////////
+ {
+          question: "Which of the following is a phrasal verb?",
+          options: ["Giving", "Give up", "Up", "Give"],
+          answer: "Give up",
+          explanation:
+            '"Give up" هو فعل مركب (Phrasal Verb) مكوَّن من فعل + حرف جر ويعني يستسلم.',
+        },
+        {
+          question: "Put the verb 'forget' in the present continuous.",
+          options: ["Forgetting", "Forget", "Forgot", "Forgets"],
+          answer: "Forgetting",
+          explanation:
+            "الفعل في المضارع المستمر بيكون على الشكل verb + ing، زي Forget → Forgetting.",
+        },
+        {
+          question:
+            "Choose the correct keywords that indicate the past simple tense.",
+          options: ["Last", "Ago", "Yesterday", "All the above"],
+          answer: "All the above",
+          explanation:
+            "الكلمات last, ago, yesterday كلها بتدل على الماضي البسيط.",
+        },
+        {
+          question: "The thing which is made of rubber and used as a toy?",
+          options: ["Ball", "Balloon", "Yoyo", "Car"],
+          answer: "Yoyo",
+          explanation: "اليويو لعبة مشهورة مصنوعة من المطاط.",
+        },
+        {
+          question: "Which of the following is a modal verb?",
+          options: ["Gives", "Giving", "Give", "Should"],
+          answer: "Should",
+          explanation:
+            '"Should" فعل ناقص (Modal Verb) يُستخدم لتقديم النصيحة أو الإرشاد.',
+        },
+        {
+          question: "What is the fastest animal?",
+          options: ["Horse", "Elephant", "Cheetah", "Tiger"],
+          answer: "Cheetah",
+          explanation: "الفهد (Cheetah) هو أسرع حيوان بري.",
+        },
+        {
+          question: "What is the superlative form of 'big'?",
+          options: ["Biggest", "The biggest", "More big", "Most big"],
+          answer: "The biggest",
+          explanation: "صيغة التفضيل من big هي the biggest لأنها صفة قصيرة.",
+        },
+        {
+          question: "Put the verb 'eat' in the past simple.",
+          options: ["Eats", "Eating", "Ate", "Eaten"],
+          answer: "Ate",
+          explanation: "Ate هو الماضي البسيط للفعل eat.",
+        },
+        {
+          question: "What is the plural of the word 'fox'?",
+          options: ["Foxes", "Foxs", "Fices", "Fixes"],
+          answer: "Foxes",
+          explanation: "الجمع الصحيح لـ fox هو foxes بإضافة es.",
+        },
+        {
+          question:
+            "What is the small animal that has a coiled shell on its back?",
+          options: ["Turtle", "Lizard", "Crab", "Snail"],
+          answer: "Snail",
+          explanation: "الحلزون هو الحيوان اللي له صدفة لولبية على ظهره.",
+        },
+        {
+          question: "Where do you buy musical instruments from?",
+          options: ["Toy shop", "Clothes shop", "Music shop", "Bakery"],
+          answer: "Music shop",
+          explanation: "المكان المناسب لشراء الآلات الموسيقية هو Music shop.",
+        },
+        {
+          question: "What is the thing we write with and contains ink?",
+          options: ["Pen", "Book", "Pencil", "Eraser"],
+          answer: "Pen",
+          explanation: "القلم (Pen) هو اللي نكتب به وبيحتوي على الحبر.",
+        },
+        {
+          question: "What is the past participle of the verb 'drink'?",
+          options: ["Drinked", "Drink", "Dark", "Drunk"],
+          answer: "Drunk",
+          explanation: "التصريف الثالث للفعل drink هو drunk.",
+        },
+        {
+          question: "What is the large animal that is gray in color?",
+          options: ["Tiger", "Dog", "Elephant", "Giraffe"],
+          answer: "Elephant",
+          explanation: "الفيل هو الحيوان الكبير لونه رمادي.",
+        },
+        {
+          question: "What is the thing made of dough and baked in the oven?",
+          options: ["Cake", "Bread", "Soup", "Juice"],
+          answer: "Bread",
+          explanation: "الخبز بيتعمل من العجين (dough) ويتخبز في الفرن.",
+        },
+        {
+          question: "Which form is correct if the action happens twice a week?",
+          options: [
+            "Past continuous",
+            "Present perfect",
+            "Present simple",
+            "Future",
+          ],
+          answer: "Present simple",
+          explanation:
+            "المضارع البسيط يُستخدم للتعبير عن العادات المتكررة زي مرتين أسبوعيًا.",
+        },
+        {
+          question: "Which is the correct comparative form of 'funny'?",
+          options: ["Funnyest", "More funny", "Funnier", "Funnyer"],
+          answer: "Funnier",
+          explanation: "الصيغة الصحيحة هي funnier، y تتحول إلى i ثم نضيف er.",
+        },
+        {
+          question: "Which is the correct superlative form of 'tall'?",
+          options: ["More tall", "Tallest", "Taller", "Most tall"],
+          answer: "Tallest",
+          explanation:
+            "tallest هي صفة التفضيل لأنها من الصفات القصيرة ونضيف est.",
+        },
+        {
+          question: "Which vehicle has 4 wheels?",
+          options: ["Bike", "Boat", "Train", "Car"],
+          answer: "Car",
+          explanation: "السيارة (Car) هي وسيلة النقل اللي لها 4 عجلات.",
+        },
+        {
+          question: "My father loves listening to ___ while driving.",
+          options: ["Music", "Books", "Games", "TV"],
+          answer: "Music",
+          explanation: "من المعتاد أن الناس يسمعوا موسيقى أثناء القيادة.",
+        },
+/////////////////////
+  {
+          question: "Animal that is brown in color and used for transportation",
+          options: ["Cat", "Frog", "Horse", "Crocodile"],
+          answer: "Horse",
+          explanation:
+            "الحصان هو الحيوان المعروف بلونه البني وغالبًا ما يُستخدم في النقل والركوب عبر العصور.",
+        },
+        {
+          question: "What is a substance that is white or transparent in color",
+          options: ["Stone", "Water", "Wood", "Sand"],
+          answer: "Water",
+          explanation:
+            "المياه شفافة وعديمة اللون وأحيانًا توصف باللون الأبيض النقي.",
+        },
+        {
+          question: "Which animal has gills for breathing",
+          options: ["Dog", "Horse", "Cat", "Shark"],
+          answer: "Shark",
+          explanation: "القرش من الكائنات البحرية التي تتنفس بالخياشيم.",
+        },
+        {
+          question:
+            "What is the common type of bag primarily used to carry books and school supplies on your back",
+          options: ["Handbag", "Wallet", "Backpack", "Shopping Bag"],
+          answer: "Backpack",
+          explanation:
+            "حقيبة الظهر هي الحقيبة المصممة لحمل الكتب والأدوات المدرسية على الظهر.",
+        },
+        {
+          question: "Something we use to measure the liquid, it's .........",
+          options: ["Spoon", "Bottle", "Plate", "Measuring cup"],
+          answer: "Measuring cup",
+          explanation: "كوب القياس هو الأداة المخصصة لقياس السوائل بدقة.",
+        },
+        {
+          question: "What is the tool used to attach multiple papers together",
+          options: ["Scissors", "Stapler", "Eraser", "Pen"],
+          answer: "Stapler",
+          explanation:
+            "الدباسة هي الأداة المصممة لتثبيت وربط الأوراق معًا باستخدام الدبابيس المعدنية.",
+        },
+        {
+          question: "What do we usually do with a bicycle",
+          options: ["Wear it", "Ride it", "Read it", "Eat it"],
+          answer: "Ride it",
+          explanation:
+            "الدراجة وسيلة مواصلات بنقودها أو نركبها، وده الاستخدام الصحيح ليها.",
+        },
+        {
+          question: "What is black in color and comes out at night",
+          options: ["Spider", "Bat", "Ant", "Dog"],
+          answer: "Bat",
+          explanation: "الخفاش لونه أسود أو داكن ويظهر وينشط أثناء الليل.",
+        },
+        {
+          question: "What do we usually do with a flower",
+          options: ["Drink it", "Eat it", "Smell it", "Throw it"],
+          answer: "Smell it",
+          explanation: "الورد معروف إننا بنشمه عشان ريحته حلوة، ومش للأكل.",
+        },
+        {
+          question: "Which animal is said to live in lakes",
+          options: ["Elephant", "Crocodile", "Rabbit", "Tiger"],
+          answer: "Crocodile",
+          explanation: "التمساح هو الحيوان المعروف بعيشه في البحيرات والأنهار.",
+        },
+        {
+          question: "Which animal is said to be very long",
+          options: ["Cat", "Monkey", "Bird", "Snake"],
+          answer: "Snake",
+          explanation: "الثعبان معروف بجسمه الطويل مقارنةً ببقية الحيوانات.",
+        },
+        {
+          question:
+            "Identify the tense of the sentence: 'By tomorrow, she will have finished the project.'",
+          options: [
+            "Future Perfect",
+            "Future Continuous",
+            "Present Perfect",
+            "Past Perfect",
+          ],
+          answer: "Future Perfect",
+          explanation:
+            "الجملة هنا بتقول إن في فعل هيخلص قبل وقت معين في المستقبل.",
+        },
+        {
+          question:
+            "Identify the tense of the sentence: 'I was listening to music when she arrived.'",
+          options: [
+            "Future Continuous",
+            "Past Perfect",
+            "Present Continuous",
+            "Past Continuous",
+          ],
+          answer: "Past Continuous",
+          explanation:
+            "الجملة بتوضح إن في فعل كان شغال في الماضي وقطعته حاجة تانية حصلت.",
+        },
+        {
+          question:
+            "Identify the tense of the sentence: 'He drinks coffee every morning.'",
+          options: [
+            "Past Simple",
+            "Present Simple",
+            "Present Continuous",
+            "Future Simple",
+          ],
+          answer: "Present Simple",
+          explanation:
+            "الجملة بتعبر عن عادة يومية أو روتين ثابت بيتكرر كل يوم.",
+        },
+        {
+          question:
+            "Identify the tense of the sentence: 'She had been sleeping for 10 hours before the alarm rang.'",
+          options: [
+            "Future Continuous",
+            "Past Perfect Continuous",
+            "Past Continuous",
+            "Present Perfect",
+          ],
+          answer: "Past Perfect Continuous",
+          explanation:
+            "الجملة بتوضح فعل بدأ في الماضي واستمر فترة وانتهى قبل حدث آخر.",
+        },
+        {
+          question: "To make a sandwich, you need _____",
+          options: ["Milk", "Bread", "Water", "Sugar"],
+          answer: "Bread",
+          explanation: "الساندويتش أساسه الخبز، ومن غيره مش ممكن يتعمل.",
+        },
+        {
+          question: "What is the fear of heights called",
+          options: [
+            "Hydrophobia",
+            "Arachnophobia",
+            "Acrophobia",
+            "Claustrophobia",
+          ],
+          answer: "Acrophobia",
+          explanation:
+            "الخوف من المرتفعات اسمه Acrophobia وده مصطلح علمي معناه رهبة من الأماكن العالية.",
+        },
+        {
+          question: "Which animal has a rough and thick body like scaly skin",
+          options: ["Rabbit", "Crocodile", "Dog", "Cat"],
+          answer: "Crocodile",
+          explanation: "التمساح جسمه سميك وخشن ومغطي بقشور قوية.",
+        },
+        {
+          question: "Which of the following animals is a mammal",
+          options: ["Frog", "Goldfish", "Blue whale", "Crocodile"],
+          answer: "Blue whale",
+          explanation:
+            "الحوت الأزرق من الثدييات لأنه بيتنفس برئة وبيُرضع صغاره.",
+        },
+        {
+          question: "The sound of the parrot is _____",
+          options: ["Meow", "Squawk", "Moo", "Chirp"],
+          answer: "Squawk",
+          explanation:
+            "الببغاء بيصدر صوت مميز اسمه Squawk وهو أشبه بالصراخ العالي.",
+        },
+///////
+    {
+          question: "What is the antonym of the word 'often'?",
+          options: ["Always", "Seldom", "Usually", "Sometimes"],
+          answer: "Seldom",
+          explanation:
+            "مضاد 'often' (غالباً) هو 'Seldom' (نادراً)، وكلاهما يدلان على قلة تكرار الفعل.",
+        },
+        {
+          question:
+            "Which of the following words is the most common antonym for 'often'?",
+          options: ["Always", "Rarely", "Usually", "Immediately"],
+          answer: "Rarely",
+          explanation:
+            "كلمة 'often' تعني 'غالباً ما'. الكلمة الأكثر شيوعاً وعكساً لها في المعنى هي 'Rarely' (نادراً ما)، والتي تدل على قلة تكرار الفعل.",
+        },
+        {
+          question:
+            "Which of the following is an example of an interrogative pronoun?",
+          options: ["He", "Theirs", "Who", "That"],
+          answer: "Who",
+          explanation:
+            "الضمائر الاستفهامية (Interrogative Pronouns) تُستخدم لطرح سؤال، و'Who' هو ضمير استفهام للسؤال عن الفاعل.",
+        },
+        {
+          question: "Where do we typically buy dining utensils?",
+          options: ["Pharmacy", "Library", "Store", "Museum"],
+          answer: "Store",
+          explanation:
+            "أدوات الطعام وأدوات المنزل تُشترى عادةً من المتاجر الكبرى (Store).",
+        },
+        {
+          question:
+            "A small electronic device used for performing arithmetic calculations is called a:",
+          options: ["Keyboard", "Calculator", "Printer", "Monitor"],
+          answer: "Calculator",
+          explanation:
+            "الآلة الحاسبة (Calculator) هي جهاز إلكتروني لإجراء العمليات الحسابية.",
+        },
+        {
+          question:
+            "Which of the following is an orange-colored snack, often associated with a vegetable?",
+          options: ["Grapes", "Carrots", "Bananas", "Olives"],
+          answer: "Carrots",
+          explanation:
+            "الجزر (Carrots) هو الخضار البرتقالي الشائع استخدامه كوجبة خفيفة (snack).",
+        },
+        {
+          question: "What is the past participle form of the verb 'run'?",
+          options: ["Running", "Ran", "Runned", "Run"],
+          answer: "Run",
+          explanation:
+            "فعل 'run' فعل شاذ. التصريف الثالث (Past Participle) هو 'Run' ويستخدم في الأزمنة التامة.",
+        },
+        {
+          question:
+            "Which of the following is an example of a subject pronoun?",
+          options: ["Us", "Them", "Theirs", "They"],
+          answer: "They",
+          explanation:
+            "ضمائر الفاعل (Subject Pronouns) هي الضمائر التي تقوم بالفعل في الجملة، و'They' يُستخدم للإشارة إلى جمع الغائبين.",
+        },
+        {
+          question: "What is the past participle form of the verb 'write'?",
+          options: ["Write", "Wrote", "Written", "Writing"],
+          answer: "Written",
+          explanation:
+            "الفعل 'write' هو فعل شاذ. التصريف الثالث (Past Participle) هو 'written' ويستخدم لتكوين الأزمنة التامة.",
+        },
+        {
+          question:
+            "Where would a musician go to purchase a piano, a guitar, or a drum set?",
+          options: [
+            "Toy Store",
+            "Musical Instrument Shop",
+            "Hardware Store",
+            "Bakery",
+          ],
+          answer: "Musical Instrument Shop",
+          explanation:
+            "المكان المتخصص لبيع الآلات الموسيقية الكبيرة والمعقدة هو متجر الآلات الموسيقية (Musical Instrument Shop).",
+        },
+        {
+          question: "What is the antonym of the word 'soft'?",
+          options: ["Warm", "Hard", "Gard", "Heavy"],
+          answer: "Hard",
+          explanation:
+            "كلمة 'soft' تعني 'ناعم' أو 'ليّن'. الكلمة المضادة لها هي 'Hard' (صلب أو قاس)، وهي تدل على عكس الملمس أو الليونة.",
+        },
+        {
+          question: "Which word is a synonym for 'happy'?",
+          options: ["Angry", "Sad", "Joyful", "Gard"],
+          answer: "Joyful",
+          explanation: "كلمة 'Joyful' (مبتهج) هي مرادف لكلمة 'happy' (سعيد).",
+        },
+        {
+          question:
+            "Which time-telling device is typically intended to be fixed on a wall or placed on a table?",
+          options: ["Thermometer", "Watch", "Calendar", "Clock"],
+          answer: "Clock",
+          explanation:
+            "الساعة (Clock) هي الأنسب لوصف جهاز قياس الوقت الذي يوضع على الأسطح الثابتة مثل الجدار أو المكتب.",
+        },
+        {
+          question:
+            "Which time-telling device is designed to be worn on the wrist?",
+          options: ["Clock", "Watch", "Compass", "Ruler"],
+          answer: "Watch",
+          explanation:
+            "الساعة اليدوية (Watch) هي الجهاز المصمم ليتم ارتداؤه على المعصم (محمول).",
+        },
+        {
+          question:
+            "Which place is designed for people to walk, relax, and enjoy plants?",
+          options: ["Street", "Parking Lot", "Garden", "Rooftop"],
+          answer: "Garden",
+          explanation:
+            "الحديقة (Garden) هي المكان المخصص والمصمم للمشي والاسترخاء والاستمتاع بالنباتات والأشجار.",
+        },
+        {
+          question:
+            "What is the most common antonym for 'cool' (referring to temperature)?",
+          options: ["Cold", "Warm", "Calm", "Great"],
+          answer: "Warm",
+          explanation:
+            "كلمة 'Cool' تعني 'معتدل البرودة'. الكلمة المضادة لها من حيث درجة الحرارة هي 'Warm' (دافئ).",
+        },
+        {
+          question: "What animal can run the fastest?",
+          options: ["Elephant", "Squirrel", "Mouse", "Cat"],
+          answer: "Elephant",
+          explanation:
+            "على الرغم من حجمه، يعد الفيل (Elephant) أسرع بكثير من السنجاب والفأر، حيث يمكن أن تصل سرعته إلى حوالي 40 كم/ساعة.",
+        },
+        {
+          question:
+            "Which of the following animals has gills to breathe in water?",
+          options: ["Octopus", "Dolphins", "Whales", "All of these"],
+          answer: "Octopus",
+          explanation:
+            "الأخطبوط (Octopus) يتنفس باستخدام الخياشيم (Gills). أما الدلافين والحيتان فهي ثدييات تتنفس الهواء الجوي عبر الرئتين.",
+        },
+        {
+          question: "Which mammal lays eggs?",
+          options: ["Dolphin", "Duck-billed Platypus", "Whale", "Dugong"],
+          answer: "Duck-billed Platypus",
+          explanation:
+            "خلد الماء (Duck-billed Platypus) هو أحد النوعين الوحيدين من الثدييات البدائية (Monotremes) التي تضع البيض، على عكس معظم الثدييات التي تلد صغارها.",
+        },
+        {
+          question: "Can you _____ your mind, please?",
+          options: ["Make up", "Made up", "Get up", "Make out"],
+          answer: "Make up",
+          explanation:
+            "التعبير الثابت هو 'make up your mind' ويعني 'تقرر' أو 'تغيّر رأيك'. ويجب استخدام صيغة المصدر بعد الفعل المساعد 'Can'.",
+        },
+        {
+          question:
+            "Convert the verb 'RUN' to the present continuous tense, with the pronoun 'I'.",
+          options: ["I running", "I will run", "I am running", "I am run"],
+          answer: "I am running",
+          explanation:
+            "صيغة المضارع المستمر هي (Subject + am/is/are + Verb-ing). لذلك، الصيغة الصحيحة هي 'I am running'.",
+        },
+//////////
+ {
+          question:
+            "He likes playing the guitar. Playing the guitar is his ____.",
+          options: ["job", "hobby", "sport", "subject"],
+          answer: "hobby",
+          explanation: "العزف على الجيتار نشاط يفعله في وقت فراغه، يعني هواية.",
+        },
+        {
+          question: "I want to buy new ____ for my car.",
+          options: ["toys", "bags", "books", "tires"],
+          answer: "tires",
+          explanation: "السيارة تحتاج إلى إطارات جديدة، وليس ألعاب أو كتب.",
+        },
+        {
+          question: "What is a collective tool used to keep papers together?",
+          options: ["toy", "stapler", "book", "job"],
+          answer: "stapler",
+          explanation: "الدبّاسة تُستخدم لتجميع الأوراق معًا وتثبيتها.",
+        },
+        {
+          question: "Americans usually eat ____ that is brown in color.",
+          options: ["bread", "cake", "meat", "rice"],
+          answer: "bread",
+          explanation: "الخبز الأسمر هو النوع الشائع في أمريكا.",
+        },
+        {
+          question: "The synonym of 'happy' is ____.",
+          options: ["sad", "angry", "glad", "tired"],
+          answer: "glad",
+          explanation: "كلمة 'glad' تحمل نفس معنى 'happy' وتعني سعيد أو مبتهج.",
+        },
+        {
+          question: "Choose the compound word.",
+          options: ["back", "case", "back case", "book"],
+          answer: "back case",
+          explanation: "الكلمة المركبة تتكون من كلمتين معًا، مثل 'back case'.",
+        },
+        {
+          question: "What do we wear on the upper part of our body?",
+          options: ["skirt", "pants", "shoes", "T-shirt"],
+          answer: "T-shirt",
+          explanation:
+            "التي شيرت يُلبس على الجزء العلوي من الجسم، أما البنطلون أو الجيبة أو الحذاء للجزء السفلي.",
+        },
+        {
+          question: "Choose the collective noun.",
+          options: ["tree", "book", "herd", "pen"],
+          answer: "herd",
+          explanation:
+            "كلمة 'herd' تشير إلى مجموعة من الحيوانات، وهي اسم جمعي.",
+        },
+        {
+          question:
+            "A strategy in which you are asked about what you know, what you want to know, and what you learn by the end of the lesson.",
+          options: ["Think Pair Share", "KWL", "Group work", "Water"],
+          answer: "KWL",
+          explanation:
+            "استراتيجية KWL مبنية على ما تعرفه، ما تريد معرفته، وما تعلمته.",
+        },
+        {
+          question: "They ______ the breakfast before leaving.",
+          options: ["eat", "ate", "have eaten", "will eat"],
+          answer: "ate",
+          explanation:
+            "الماضي البسيط 'ate' يُستخدم لحدث انتهى قبل حدث آخر في الماضي.",
+        },
+        {
+          question: "Choose the reflexive pronoun.",
+          options: ["my", "you", "his", "themselves"],
+          answer: "themselves",
+          explanation:
+            "'themselves' يُستخدم مع 'they' للدلالة على أن الفعل رجع على نفس الفاعل.",
+        },
+        {
+          question: "Choose the interjection.",
+          options: ["book", "run", "wow", "pen"],
+          answer: "wow",
+          explanation: "'wow' كلمة تعجب للتعبير عن الدهشة أو الانفعال.",
+        },
+        {
+          question:
+            "Choose the correct verb tense: They.........in this project since 2012.",
+          options: ["Works", "Have been working", "Is going to work", "Work"],
+          answer: "Have been working",
+          explanation:
+            "'Have been working' يدل على حدث بدأ في الماضي وما زال مستمرًا حتى الآن.",
+        },
+        {
+          question: "We can see paintings in_____",
+          options: ["Garden", "Exhibition", "Hospital", "School"],
+          answer: "Exhibition",
+          explanation: "المعرض هو المكان المخصص لعرض اللوحات الفنية.",
+        },
+        {
+          question: "When you feel nervous, _______ to music.",
+          options: ["Travel", "Listen", "Run", "Discuss"],
+          answer: "Listen",
+          explanation: "الاستماع للموسيقى هو الفعل المناسب هنا.",
+        },
+        {
+          question: "I _______ English for five years.",
+          options: ["Am studying", "Have studied", "Studied", "Will study"],
+          answer: "Have studied",
+          explanation:
+            "استخدام 'Have studied' يدل على أن الحدث بدأ في الماضي ومازال مستمرًا حتى الآن.",
+        },
+        {
+          question: "Something which is white and gives us eggs.",
+          options: ["Cow", "Cotton candy", "Hen", "Goat"],
+          answer: "Hen",
+          explanation: "الدجاجة هي الحيوان الذي يعطي البيض.",
+        },
+        {
+          question: "He _______ a picture at the moment.",
+          options: ["Paint", "Paints", "Draw", "Is painting"],
+          answer: "Is painting",
+          explanation:
+            "استخدام 'is painting' مناسب مع 'at the moment' لأنه يدل على فعل مستمر الآن.",
+        },
+        {
+          question: "A conjunction that connects two sentences.",
+          options: ["This", "Such", "Either…or", "What"],
+          answer: "Either…or",
+          explanation:
+            "'Either…or' تُستخدم لربط جملتين عند الاختيار بين شيئين.",
+        },
+        {
+          question: "Choose the adverb.",
+          options: ["here", "teacher", "book", "happy"],
+          answer: "here",
+          explanation:
+            "'here' ظرف يوضح المكان، أما الكلمات الأخرى فهي أسماء أو صفة.",
+        },
+      
+
+
+
+]
+
+      
+  
+    let currentQuestion = 0;
+
+    let score = 0;
+
+    let timer;
+
+    let timeLeft;
+
+    let userAnswers = [];
+
+ 
+
+    function closePopup() {
+
+        const popup = document.getElementById("popup");
+
+        popup.style.display = "none";
+
+    }
+
+    function showPopup() {
+
+    const popup = document.getElementById("popup");
+
+    popup.style.display = "block";
+
+}
+
+  function checkPassword() {
+    const passwordInput = document.getElementById("password").value;
+    const durationInput = parseInt(document.getElementById("duration").value) || 10;
+    const questionCountInput = parseInt(document.getElementById("questionCount").value) || questions.length; // استرجاع عدد الأسئلة المحدد
+
+    timeLeft = durationInput * 60;
+
+    if (passwordInput === "7247") {
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("quiz").classList.remove("hidden");
+        document.getElementById("result").classList.add("hidden");
+
+        // خلط الأسئلة وتحديد العدد المطلوب
+        const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5).slice(0, questionCountInput);
+        questions.length = 0;
+        questions.push(...shuffledQuestions);
+
+        loadQuestion();
+        startTimer();
+    } else {
+        showPopup(); // عرض النافذة المنبثقة في حالة كلمة مرور خاطئة
+    }
+}
+    function loadQuestion() {
+
+        const questionContainer = document.getElementById("question-container");
+
+      questionContainer.innerHTML = `
+    <h2>${questions[currentQuestion].question}</h2>
+    ${questions[currentQuestion].options.map((option) => `
+        <label>
+            <input type="radio" name="option" value="${option}">
+            ${option === questions[currentQuestion].answer ? option : option}  <!-- تم إزالة الفئة .correct هنا -->
+        </label><br>
+    `).join('')}
+`;
+
+        document.getElementById("question-info").textContent = `السؤال ${currentQuestion + 1} من ${questions.length}`;
+
+    }
+
+    function nextQuestion() {
+
+        const selectedOption = document.querySelector('input[name="option"]:checked');
+
+        if (selectedOption) {
+
+            const answer = selectedOption.value;
+
+            userAnswers[currentQuestion] = answer;
+
+            if (answer === questions[currentQuestion].answer) {
+
+                score++;
+
+            }
+
+            currentQuestion++;
+
+            if (currentQuestion < questions.length) {
+
+                loadQuestion();
+
+            } else {
+
+                showResult();
+
+            }
+
+        } else {
+
+            alert("يرجى اختيار إجابة.");
+
+        }
+
+    }
+
+    function showResult() {
+
+        clearInterval(timer);
+
+        const resultDiv = document.getElementById("result");
+
+        resultDiv.innerHTML = `<h2>نتيجتك: ${score} من ${questions.length}</h2>`;
+
+        const incorrectAnswers = [];
+
+        const correctAnswers = [];
+
+        const timeoutQuestions = [];
+
+        questions.forEach((q, index) => {
+
+            const userAnswer = userAnswers[index];
+
+            if (userAnswer === undefined) {
+
+                timeoutQuestions.push(q.question);
+
+            } else if (userAnswer === q.answer) {
+
+                correctAnswers.push({ question: q.question, userAnswer: userAnswer });
+
+            } else {
+
+                incorrectAnswers.push({ question: q.question, correctAnswer: q.answer, userAnswer: userAnswer });
+
+            }
+
+        });
+
+        if (correctAnswers.length) {
+
+            resultDiv.innerHTML += `<h3>الإجابات الصحيحة:</h3><ul>${correctAnswers.map(item => `<li style="color: black;">${item.question} - إجابتك: <span style="color: green;">${item.userAnswer}</span></li>`).join('')}</ul>`;
+
+        }
+
+        if (incorrectAnswers.length) {
+
+            resultDiv.innerHTML += `<h3>الإجابات الخاطئة:</h3><ul>${incorrectAnswers.map(item => `<li style="color: black;">${item.question} - إجابتك: <span style="color: red;">${item.userAnswer}</span> - <span style="color: green;">الإجابة الصحيحة: ${item.correctAnswer}</span></li>`).join('')}</ul>`;
+
+        }
+
+        if (timeoutQuestions.length) {
+
+            resultDiv.innerHTML += `<h3>الأسئلة التي لم تجب عليها بسبب انتهاء الوقت:</h3><p>${timeoutQuestions.join(', ')}</p>`;
+
+        }
+
+        resultDiv.classList.remove("hidden");
+
+        document.getElementById("quiz").classList.add("hidden");
+
+    }
+
+    function startTimer() {
+
+        timer = setInterval(() => {
+
+            timeLeft--;
+
+            const minutes = Math.floor(timeLeft / 60);
+
+            const seconds = timeLeft % 60;
+
+            document.getElementById("timer").textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (timeLeft <= 0) {
+
+                clearInterval(timer);
+
+                showResult();
+
+            }
+
+        }, 1000);
+
+    }
+
+    // إضافة مستمع حدث "Enter" هنا
+
+    document.getElementById("quizForm").addEventListener("keypress", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault(); // لمنع السلوك الافتراضي
+
+            nextQuestion(); // الانتقال للسؤال التالي
+
+        }
+
+    });
+
+</script>
+
+</body>
+
+</html>
